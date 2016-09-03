@@ -2,6 +2,7 @@
    Table of Contents
    ========================================================================== */
 
+
 /*
 
     0.  Includes
@@ -18,30 +19,31 @@
 
  */
 
+
 /* ==========================================================================
    0. Includes - Ground zero
    ========================================================================== */
 
 @import url(normalize.css);
 
-
 /* ==========================================================================
    1. Icons - Sets up the icon font and respective classes
    ========================================================================== */
 
+
 /* Import the font file with the icons in it */
+
 @font-face {
     font-family: 'icons';
-    src:url('../fonts/icons.eot');
-    src:url('../fonts/icons.eot?#iefix') format('embedded-opentype'),
-        url('../fonts/icons.woff') format('woff'),
-        url('../fonts/icons.ttf') format('truetype'),
-        url('../fonts/icons.svg#icons') format('svg');
+    src: url('../fonts/icons.eot');
+    src: url('../fonts/icons.eot?#iefix') format('embedded-opentype'), url('../fonts/icons.woff') format('woff'), url('../fonts/icons.ttf') format('truetype'), url('../fonts/icons.svg#icons') format('svg');
     font-weight: normal;
     font-style: normal;
 }
 
+
 /* Apply these base styles to all icons */
+
 .icon-ghost:before,
 .icon-feed:before,
 .icon-twitter:before,
@@ -58,21 +60,27 @@
     text-decoration: none;
 }
 
+
 /* Each icon is created by inserting the corret character into the
    content of the :before pseudo element. Like a boss. */
+
 .icon-ghost:before {
     content: "\e000";
 }
+
 .icon-feed:before {
     content: "\e001";
 }
+
 .icon-twitter:before {
     content: "\e002";
     font-size: 1.1em;
 }
+
 .icon-google-plus:before {
     content: "\e003";
 }
+
 .icon-facebook:before {
     content: "\e004";
 }
@@ -91,7 +99,7 @@ html {
 body {
     height: 100%;
     max-height: 100%;
-    font-family: 'Noto Serif','Inziu Iosevka SC', serif;
+    font-family: 'Noto Serif', 'Inziu Iosevka SC', 'Microsoft Yahei UI', 'Microsoft Yahei', serif;
     font-size: 2.0rem;
     line-height: 1.6em;
     color: #3A4145;
@@ -109,12 +117,16 @@ body {
     text-shadow: none;
 }
 
-h1, h2, h3,
-h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
     text-rendering: optimizeLegibility;
     line-height: 1;
     margin-top: 0;
-    font-family: 'Open Sans','Inziu Iosevka SC', sans-serif;
+    font-family: 'Open Sans', 'Inziu Iosevka SC', 'Microsoft Yahei UI', 'Microsoft Yahei' sans-serif;
 }
 
 h1 {
@@ -156,18 +168,26 @@ a:hover {
     color: #57A3E8;
 }
 
-h1 a, h2 a, h3 a,
-h4 a, h5 a, h6 a {
+h1 a,
+h2 a,
+h3 a,
+h4 a,
+h5 a,
+h6 a {
     color: #50585D;
 }
 
-
-p, ul, ol, dl {
+p,
+ul,
+ol,
+dl {
     margin: 1.6em 0;
 }
 
-ol ol, ul ul,
-ul ol, ol ul {
+ol ol,
+ul ul,
+ul ol,
+ol ul {
     margin: 0.4em 0;
 }
 
@@ -213,23 +233,28 @@ blockquote p {
 blockquote small {
     display: inline-block;
     margin: 0.8em 0 0.8em 1.5em;
-    font-size:0.9em;
+    font-size: 0.9em;
     color: #ccc;
 }
 
-blockquote small:before { content: '\2014 \00A0'; }
-
-blockquote cite {
-    font-weight:bold;
+blockquote small:before {
+    content: '\2014 \00A0';
 }
 
-blockquote cite a { font-weight: normal; }
+blockquote cite {
+    font-weight: bold;
+}
+
+blockquote cite a {
+    font-weight: normal;
+}
 
 mark {
     background-color: #ffc336;
 }
 
-code, tt {
+code,
+tt {
     padding: 1px 3px;
     font-family: Inconsolata, monospace, sans-serif;
     font-size: 0.85em;
@@ -254,7 +279,8 @@ pre {
     border-radius: 3px;
 }
 
-pre code, tt {
+pre code,
+tt {
     font-size: inherit;
     white-space: -moz-pre-wrap;
     white-space: pre-wrap;
@@ -274,16 +300,14 @@ kbd {
     font-weight: bold;
     background: #f4f4f4;
     border-radius: 4px;
-    box-shadow:
-        0 1px 0 rgba(0, 0, 0, 0.2),
-        0 1px 0 0 #fff inset;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2), 0 1px 0 0 #fff inset;
 }
 
 table {
     -moz-box-sizing: border-box;
     box-sizing: border-box;
     margin: 1.6em 0;
-    width:100%;
+    width: 100%;
     max-width: 100%;
     background-color: transparent;
 }
@@ -297,38 +321,47 @@ table td {
     border-top: 1px solid #efefef;
 }
 
-table th { color: #000; }
+table th {
+    color: #000;
+}
 
-table caption + thead tr:first-child th,
-table caption + thead tr:first-child td,
-table colgroup + thead tr:first-child th,
-table colgroup + thead tr:first-child td,
+table caption+ thead tr:first-child th,
+table caption+ thead tr:first-child td,
+table colgroup+ thead tr:first-child th,
+table colgroup+ thead tr:first-child td,
 table thead:first-child tr:first-child th,
 table thead:first-child tr:first-child td {
     border-top: 0;
 }
 
-table tbody + tbody { border-top: 2px solid #efefef; }
+table tbody+ tbody {
+    border-top: 2px solid #efefef;
+}
 
-table table table { background-color: #fff; }
+table table table {
+    background-color: #fff;
+}
 
-table tbody > tr:nth-child(odd) > td,
-table tbody > tr:nth-child(odd) > th {
+table tbody> tr:nth-child(odd)> td,
+table tbody> tr:nth-child(odd)> th {
     background-color: #f6f6f6;
 }
 
-table.plain tbody > tr:nth-child(odd) > td,
-table.plain tbody > tr:nth-child(odd) > th {
-   background: transparent;
+table.plain tbody> tr:nth-child(odd)> td,
+table.plain tbody> tr:nth-child(odd)> th {
+    background: transparent;
 }
 
-iframe, .fluid-width-video-wrapper {
+iframe,
+.fluid-width-video-wrapper {
     display: block;
     margin: 1.6em 0;
 }
 
+
 /* When a video is inside the fitvids wrapper, drop the
 margin on the iframe, cause it breaks stuff. */
+
 .fluid-width-video-wrapper iframe {
     margin: 0;
 }
@@ -338,14 +371,18 @@ margin on the iframe, cause it breaks stuff. */
    3. Utilities - These things get used a lot
    ========================================================================== */
 
+
 /* Hides shit */
+
 .hidden {
     text-indent: -9999px;
     visibility: hidden;
     display: none;
 }
 
+
 /* Creates a responsive wrapper that makes our content scale nicely */
+
 .inner {
     position: relative;
     width: 80%;
@@ -353,7 +390,9 @@ margin on the iframe, cause it breaks stuff. */
     margin: 0 auto;
 }
 
+
 /* Centres vertically yo. (IE8+) */
+
 .vertical {
     display: table-cell;
     vertical-align: middle;
@@ -364,7 +403,9 @@ margin on the iframe, cause it breaks stuff. */
    4. General - The main styles for the the theme
    ========================================================================== */
 
+
 /* Big cover image on the home page */
+
 .site-head {
     position: relative;
     display: table;
@@ -381,7 +422,9 @@ margin on the iframe, cause it breaks stuff. */
     text-decoration: none;
 }
 
+
 /* Yo-logo. Yolo-go. Upload one in ghost/settings/ */
+
 .blog-logo img {
     display: block;
     max-height: 100px;
@@ -390,14 +433,16 @@ margin on the iframe, cause it breaks stuff. */
     line-height: 0;
 }
 
+
 /* The details of your blog. Defined in ghost/settings/ */
+
 .blog-title {
     margin: 10px 0 10px 0;
     font-size: 5rem;
     letter-spacing: -1px;
     font-weight: bold;
     font-family: 'Open Sans', sans-serif;
-    text-shadow: 0 1px 6px rgba(0,0,0,0.1);
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
 }
 
 .blog-description {
@@ -407,13 +452,15 @@ margin on the iframe, cause it breaks stuff. */
     font-weight: 300;
     font-family: 'Noto Serif', serif;
     letter-spacing: 0;
-    text-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
 }
 
+
 /* Every post, on every page, gets this style on its <article> tag */
+
 .post {
     position: relative;
-    width:80%;
+    width: 80%;
     max-width: 700px;
     margin: 4rem auto;
     padding-bottom: 4rem;
@@ -422,8 +469,10 @@ margin on the iframe, cause it breaks stuff. */
     hyphens: auto;
 }
 
+
 /* Add a little circle in the middle of the border-bottom on our .post
    just for the lolz and stylepoints. */
+
 .post:after {
     display: block;
     content: "";
@@ -442,7 +491,7 @@ margin on the iframe, cause it breaks stuff. */
 }
 
 .post-title {
-    margin:0;
+    margin: 0;
 }
 
 .post-title a {
@@ -525,11 +574,14 @@ margin on the iframe, cause it breaks stuff. */
     text-decoration: none;
 }
 
+
 /* ==========================================================================
    5. Single Post - When you click on an individual post
    ========================================================================== */
 
+
 /* Insert some mad padding up in the header for better spacing */
+
 .post-template .post-header {
     padding: 60px 0;
     text-align: center;
@@ -558,7 +610,9 @@ margin on the iframe, cause it breaks stuff. */
     box-shadow: #fff 0 0 0 5px;
 }
 
+
 /* Keep large images within the bounds of the post-width */
+
 .post-content img {
     display: block;
     max-width: 100%;
@@ -566,7 +620,9 @@ margin on the iframe, cause it breaks stuff. */
     height: auto;
 }
 
+
 /* The author credit area after the post */
+
 .post-footer {
     position: relative;
     margin: 4rem 0 0 0;
@@ -585,15 +641,19 @@ margin on the iframe, cause it breaks stuff. */
     line-height: 1.6em;
 }
 
+
 /* Create some space to the right for the share links */
+
 .post-footer .author {
     margin-right: 180px;
 }
+
 
 /* Drop the share links in the space to the right.
    Doing it like this means it's easier for the author bio
    to be flexible at smaller screen sizes while the share
    links remain at a fixed width the whole time */
+
 .post-footer .share {
     position: absolute;
     top: 4rem;
@@ -618,68 +678,78 @@ margin on the iframe, cause it breaks stuff. */
    6. Third Party Elements - Embeds from other services
    ========================================================================== */
 
+
 /* Hexo: Youtube, other video container */
 
 .video-container {
-  position: relative;
-  padding-top: 56.25%;
-  height: 0;
-  overflow: hidden;
+    position: relative;
+    padding-top: 56.25%;
+    height: 0;
+    overflow: hidden;
 }
+
 .video-container iframe,
 .video-container object,
 .video-container embed {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  margin-top: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    margin-top: 0;
 }
+
 
 /* Hexo: Syntax Highlighter */
 
 figure.highlight {
-    background:#fff;
-    border-radius:0.3em;
-    border:1px solid #e1e1e1;
-    line-height:1.45em;
-    font-size:.9em;
-    margin-bottom:2.1em;
-    color:#222;
-    overflow:auto;
-    white-space:pre;
-    word-wrap:normal;
+    background: #fff;
+    border-radius: 0.3em;
+    border: 1px solid #e1e1e1;
+    line-height: 1.45em;
+    font-size: .9em;
+    margin-bottom: 2.1em;
+    color: #222;
+    overflow: auto;
+    white-space: pre;
+    word-wrap: normal;
 }
+
 figure.highlight figcaption {
     padding: 7px 10px;
     font-size: .8em;
 }
+
 figure.highlight table {
     margin: 0;
 }
-figure.highlight table > tbody > tr > td {
+
+figure.highlight table> tbody> tr> td {
     padding: 0;
     background: #fff !important;
 }
-figure.highlight table > tbody > tr > td.gutter {
+
+figure.highlight table> tbody> tr> td.gutter {
     max-width: 40px;
     text-align: right;
 }
+
 figure.highlight pre {
     border: none;
     margin: 0;
 }
 
+
 /* Theme: Solarized - Github
  * More theme here: http://softwaremaniacs.org/media/soft/highlight/test.html
  */
+
 pre .comment,
 pre .template_comment,
 .diff pre .header,
 pre .javadoc {
-  color: #998;
-  font-style: italic
+    color: #998;
+    font-style: italic
 }
 
 pre .keyword,
@@ -690,62 +760,62 @@ pre .winutils,
 pre .subst,
 pre .request,
 pre .status {
-  color: #333;
-  font-weight: bold
+    color: #333;
+    font-weight: bold
 }
 
 pre .number,
 pre .hexcolor,
 .ruby pre .constant {
-  color: #099;
+    color: #099;
 }
 
 pre .string,
 pre .tag pre .value,
 pre .phpdoc,
 .tex pre .formula {
-  color: #d14
+    color: #d14
 }
 
 pre .title,
 pre .id,
 .coffeescript pre .params,
 .scss pre .preprocessor {
-  color: #900;
-  font-weight: bold
+    color: #900;
+    font-weight: bold
 }
 
 .javascript pre .title,
 .lisp pre .title,
 .clojure pre .title,
 pre .subst {
-  font-weight: normal
+    font-weight: normal
 }
 
 pre .class pre .title,
 .haskell pre .type,
 .vhdl pre .literal,
 .tex pre .command {
-  color: #458;
-  font-weight: bold
+    color: #458;
+    font-weight: bold
 }
 
 pre .tag,
 pre .tag pre .title,
 pre .rules pre .property,
 .django pre .tag pre .keyword {
-  color: #000080;
-  font-weight: normal
+    color: #000080;
+    font-weight: normal
 }
 
 pre .attribute,
 pre .variable,
 .lisp pre .body {
-  color: #008080
+    color: #008080
 }
 
 pre .regexp {
-  color: #009926
+    color: #009926
 }
 
 pre .symbol,
@@ -753,13 +823,13 @@ pre .symbol,
 .lisp pre .keyword,
 .tex pre .special,
 pre .prompt {
-  color: #990073
+    color: #990073
 }
 
 pre .built_in,
 .lisp pre .title,
 .clojure pre .built_in {
-  color: #0086b3
+    color: #0086b3
 }
 
 pre .preprocessor,
@@ -768,24 +838,24 @@ pre .pi,
 pre .doctype,
 pre .shebang,
 pre .cdata {
-  color: #999;
-  font-weight: bold
+    color: #999;
+    font-weight: bold
 }
 
 pre .deletion {
-  background: #fdd
+    background: #fdd
 }
 
 pre .addition {
-  background: #dfd
+    background: #dfd
 }
 
 .diff pre .change {
-  background: #0086b3
+    background: #0086b3
 }
 
 pre .chunk {
-  color: #aaa
+    color: #aaa
 }
 
 
@@ -806,7 +876,9 @@ pre .chunk {
    7. Pagination - Tools to let you flick between pages
    ========================================================================== */
 
+
 /* The main wrapper for our pagination links */
+
 .pagination {
     position: relative;
     width: 80%;
@@ -822,7 +894,9 @@ pre .chunk {
     color: #9EABB3;
 }
 
+
 /* Push the previous/next links out to the left/right */
+
 .older-posts,
 .newer-posts {
     position: absolute;
@@ -893,7 +967,9 @@ pre .chunk {
     margin-right: 0.2em;
 }
 
+
 /* The subscribe icon on the footer */
+
 .subscribe {
     width: 28px;
     height: 28px;
@@ -909,7 +985,9 @@ pre .chunk {
     transition: box-shadow 0.5s;
 }
 
+
 /* The RSS icon, inserted via icon font */
+
 .subscribe:before {
     color: #D2DEE3;
     font-size: 10px;
@@ -920,9 +998,11 @@ pre .chunk {
     transition: color 0.5s ease;
 }
 
+
 /* Add a box shadow to on hover */
+
 .subscribe:hover {
-    box-shadow: rgba(0,0,0,0.05) 0 0 0 3px;
+    box-shadow: rgba(0, 0, 0, 0.05) 0 0 0 3px;
     transition: box-shadow 0.25s;
 }
 
@@ -930,40 +1010,46 @@ pre .chunk {
     color: #50585D;
 }
 
+
 /* CSS tooltip saying "Subscribe!" - initially hidden */
+
 .tooltip {
-    opacity:0;
+    opacity: 0;
     display: inline-block;
     padding: 4px 8px 5px 8px;
-    position:absolute;
+    position: absolute;
     top: -23px;
     left: -21px;
-    color: rgba(255,255,255,0.9);
+    color: rgba(255, 255, 255, 0.9);
     font-size: 1.1rem;
     line-height: 1em;
     text-align: center;
     background: #50585D;
-    border-radius:20px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    border-radius: 20px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
     transition: opacity 0.3s ease, top 0.3s ease;
 }
 
+
 /* The little chiclet arrow under the tooltip, pointing down */
+
 .tooltip:after {
-    content:"";
-    border-width:5px 5px 0 5px;
-    border-style:solid;
+    content: "";
+    border-width: 5px 5px 0 5px;
+    border-style: solid;
     border-color: #50585D transparent;
-    display:block;
-    position:absolute;
-    bottom:-4px;
-    left:50%;
-    margin-left:-5px;
+    display: block;
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    margin-left: -5px;
     z-index: 220;
-    width:0;
+    width: 0;
 }
 
+
 /* On hover, show the tooltip! */
+
 .subscribe:hover .tooltip {
     opacity: 1;
     top: -33px;
@@ -975,11 +1061,9 @@ pre .chunk {
    ========================================================================== */
 
 @media only screen and (max-width: 900px) {
-
     blockquote {
         margin-left: 0;
     }
-
     .site-head {
         -webkit-box-sizing: border-box;
         -moz-box-sizing: border-box;
@@ -988,146 +1072,118 @@ pre .chunk {
         min-height: 240px;
         padding: 15% 0;
     }
-
     .blog-title {
         font-size: 4rem;
         letter-spacing: -1px;
     }
-
     .blog-description {
         font-size: 1.7rem;
         line-height: 1.5em;
     }
-
     .post {
         font-size: 0.9em;
         line-height: 1.6em;
     }
-
     .post-template .post {
         padding-bottom: 1rem;
     }
-
     .post-template .post-header {
         padding: 40px 0;
     }
-
     h1 {
         font-size: 4.8rem;
         text-indent: -2px;
     }
-
     h2 {
         font-size: 3.8rem;
     }
-
     h3 {
         font-size: 3.3rem;
     }
-
     h4 {
         font-size: 2.8rem;
     }
-
 }
+
 
 /* ==========================================================================
    10. Media Queries - Smaller than 500px
    ========================================================================== */
 
-
 @media only screen and (max-width: 500px) {
-
     .blog-logo img {
         max-height: 80px;
     }
-
     .inner,
     .pagination {
         width: auto;
         margin-left: 16px;
         margin-right: 16px;
     }
-
     .post {
-        width:auto;
+        width: auto;
         margin-left: 16px;
         margin-right: 16px;
         font-size: 0.8em;
         line-height: 1.6em;
     }
-
     .site-head {
         padding: 10% 0;
     }
-
     .blog-title {
         font-size: 3rem;
     }
-
     .blog-description {
         font-size: 1.5rem;
     }
-
-
-    h1, h2 {
+    h1,
+    h2 {
         font-size: 3rem;
         line-height: 1.1em;
         letter-spacing: -1px;
     }
-
     h3 {
         font-size: 2.8rem;
     }
-
     h4 {
         font-size: 2.3rem;
     }
-
     .post-template .post-header {
         padding: 30px 0;
     }
-
     .post-meta {
         font-size: 1.3rem;
     }
-
     .post-footer {
         padding: 4rem 0;
         text-align: center;
     }
-
     .post-footer .author {
         margin: 0 0 2rem 0;
         padding: 0 0 1.6rem 0;
         border-bottom: #EBF2F6 1px dashed;
     }
-
     .post-footer .share {
         position: static;
         width: auto;
     }
-
     .post-footer .share a {
         margin: 1.4rem 0.8rem 0 0.8rem;
     }
-
     .older-posts,
     .newer-posts {
         position: static;
         margin: 10px 0;
     }
-
     .page-number {
         display: block;
     }
-
     .site-footer {
         margin-top: 6rem;
         font-size: 1.1rem;
     }
-
 }
+
 
 /* ==========================================================================
    End of file. Media queries should be the last thing here. Do not add stuff
