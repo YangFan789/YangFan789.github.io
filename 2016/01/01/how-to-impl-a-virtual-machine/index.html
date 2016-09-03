@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+  <title>虚拟机的简明实现教程 | fuis</title>
+  <meta name="description" content="A programmaer which likes exploring" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="MobileOptimized" content="320" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="stylesheet" type="text/css" href="/css/screen.css" />
+  <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noto+Serif:400,700,400italic|Open+Sans:700,400" />
+
+  <meta name="generator" content="fuis">
+
+  
+  
+  
+
+  
+</head>
+
+
+<body class="post-template">
+
+  <header class="site-head"  style="background-image: url(http://o6zxfsw0t.bkt.clouddn.com/16-9-3/60020041.jpg)" >
+    <div class="vertical">
+        <div class="site-head-content inner">
+             <a class="blog-logo" href="/"><img src="http://o6zxfsw0t.bkt.clouddn.com/16-9-3/66438623.jpg" alt="Blog Logo"/></a> 
+            <h1 class="blog-title">fuis</h1>
+            <h2 class="blog-description">A programmaer which likes exploring</h2>
+        </div>
+    </div>
+</header>
+  
+
+<main class="content" role="main">
+  <article class="post">
+    <span class="post-meta">
+      <time datetime="2015-12-31T16:00:00.000Z" itemprop="datePublished">
+          2016-01-01
+      </time>
+    
+    
+    | 
+    <a href='/tags/tutorial/'>tutorial</a>
+    
+    
+</span>
+    <h1 class="post-title">虚拟机的简明实现教程</h1>
+    <section class="post-content">
+      <p><em>本文的主题是编程语言虚拟机， 不是类似VMware可以运行操作系统的虚拟机</em></p>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>在计算机性能大幅提升的今天，直接编译成native code的语言越来越少。一般来说，需要编译到native code的语言提供较少的动态特性和灵活性。在提倡元编程的今天，直接编译到native code的做法其实并不适宜。现代编程语言，如Java，C#，都是编译到一种适宜虚拟机执行的中间语言。</p>
+<p>一般来说，编程语言虚拟机有两种。一种是基于寄存器（register-based）的虚拟机，另外一种是栈式（stack-based）虚拟机。其中，栈式虚拟机最为简单，生成的代码比较紧凑，便于网络上传输。但由于指令（instructions）和操作数（operand）需要频繁地压栈和出栈，性能不及基于寄存器的虚拟机。目前，CPython实现的虚拟机是栈式的。而其他虚拟机比如CLR，Hotspot VM所要执行的 代码会给你一种它们是栈式虚拟机的错觉，但实际上他们运行起来并没有运算栈。而Android上的Dalvik虚拟机是基于寄存器的。这种虚拟机运行的代码不够紧凑，但是通常性能比较高（毕竟Android是面向移动设备设计的）。并且基于寄存器的虚拟机相比栈式虚拟机来说比较难于实现。</p>
+<p>作为虚拟机的简明教程，自然选择实现难度较低的栈式虚拟机来实现。现在我们就来实现一个简单的虚拟机，一个能执行线性IR（Intermediate Representation，中间表示）的虚拟机。</p>
+<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>比如<code>print(1+2*3)</code>会被编译成</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">3</div><div class="line">2</div><div class="line">Mul</div><div class="line">1</div><div class="line">Add</div><div class="line">print</div></pre></td></tr></table></figure>
+<p>然后我们的虚拟机从上到下执行这一线性的表示，并输出<code>7</code>。</p>
+<h2 id="指令集的设计"><a href="#指令集的设计" class="headerlink" title="指令集的设计"></a>指令集的设计</h2><p>首先这个虚拟机要能够执行四则运算，于是就需要如下的指令：</p>
+<ul>
+<li>Add，加</li>
+<li>Sub，减</li>
+<li>Mul，乘</li>
+<li>Div，除</li>
+</ul>
+<p>需要一些基本的操作，以便调试。</p>
+<ul>
+<li>Print，打印</li>
+<li>ReadLine，读一行</li>
+<li>Exit，退出</li>
+</ul>
+<p>一些用于实现控制流的指令：</p>
+<ul>
+<li>Jmp，跳转到指定标号指令的指令</li>
+<li>If，判断</li>
+<li>Call，调用函数</li>
+<li>Return，从函数中返回</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">public enum OpCode</div><div class="line">&#123;</div><div class="line">    Add,</div><div class="line">    Sub,</div><div class="line">    Mul,</div><div class="line">    Div,</div><div class="line">    Print,</div><div class="line">    Jmp,</div><div class="line">    If,</div><div class="line">    ReadLine,</div><div class="line">    Return,</div><div class="line">    Call,</div><div class="line">    Exit</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="实现这个虚拟机的主干"><a href="#实现这个虚拟机的主干" class="headerlink" title="实现这个虚拟机的主干"></a>实现这个虚拟机的主干</h2><p>既然是栈式虚拟机，那么首先我们需要一个栈</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">private readonly List&lt;dynamic&gt; dataStack = new List&lt;dynamic&gt;();</div></pre></td></tr></table></figure>
+<p>和一个分派指令的字典</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">private readonly Dictionary&lt;OpCode, Action&gt; dispatchTable;</div></pre></td></tr></table></figure>
+<p>然后我们需要一组从栈中取出或添加指令或者操作数的函数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">private dynamic Pop() &#123;</div><div class="line">    var last = dataStack.Last();</div><div class="line">    dataStack.RemoveAt(dataStack.Count - 1);</div><div class="line">    return last;</div><div class="line">&#125;</div><div class="line"></div><div class="line">private void Push(dynamic value) &#123;</div><div class="line">    dataStack.Add(value);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>接下来就可以实现各个指令了</p>
+<p>首先是加法指令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Push(Pop() + Pop());</div></pre></td></tr></table></figure>
+<p>减法指令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">var last = Pop();</div><div class="line">Push(Pop() - last);</div></pre></td></tr></table></figure>
+<p>非常简单对吧。</p>
+<p>乘法和除法指令的实现同理，留给读者们自行补充。</p>
+<p>然后简单地写好运行指令的函数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">private void Run(params dynamic[] program) &#123;</div><div class="line">    opcodeListLength = program.Length;</div><div class="line">    while (0 &lt;= instructionPointer &amp;&amp; instructionPointer &lt; opcodeListLength) &#123;</div><div class="line">        var opcode = program[instructionPointer++];</div><div class="line">        if (opcode is OpCode) &#123;</div><div class="line">            dispatchTable[opcode]();</div><div class="line">        &#125;</div><div class="line">        else &#123;</div><div class="line">            Push(opcode);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这个函数也非常简单，我就不做过多的解释了。</p>
+<p>那么实现下<code>Print</code>指令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Console.Write(Pop());</div></pre></td></tr></table></figure>
+<p>同样是那么简单。</p>
+<p><code>ReadLine</code>和<code>If</code>指令同理：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Push(Console.ReadLine());</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">private void If() &#123;</div><div class="line">    var falseClause = Pop();</div><div class="line">    var trueClause = Pop();</div><div class="line">    var condition = Pop();</div><div class="line">    Push(condition ? trueClause : falseClause);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>然后实现<code>Call</code>和<code>Return</code>指令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">private void Return() &#123;</div><div class="line">    instructionPointer = lastinstructionPointer;</div><div class="line">&#125;</div><div class="line"></div><div class="line">private void Call() &#123;</div><div class="line">    lastinstructionPointer = instructionPointer;</div><div class="line">    instructionPointer = Pop();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>当然应该能看出来，这个Call/Return的实现是有问题的。有兴趣的读者朋友们可以自己把这个实现改成正确的。</p>
+<p>然后把这些函数的实现放到<code>dispatchTable</code>中去就好了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">dispatchTable = new Dictionary&lt;OpCode, Action&gt; &#123;</div><div class="line">    [OpCode.Add] = () =&gt; &#123; Push(Pop() + Pop()); &#125;,</div><div class="line">    [OpCode.Sub] = () =&gt; &#123;</div><div class="line">        var last = Pop();</div><div class="line">        Push(Pop() - last);</div><div class="line">    &#125;,</div><div class="line">    [OpCode.Mul] = () =&gt; &#123; Push(Pop() * Pop()); &#125;,</div><div class="line">    [OpCode.Div] = () =&gt; &#123;</div><div class="line">        var last = Pop();</div><div class="line">        Push(Pop() / last);</div><div class="line">    &#125;,</div><div class="line">    [OpCode.Jmp] = () =&gt; &#123; instructionPointer = Pop(); &#125;,</div><div class="line">    [OpCode.Print] = () =&gt; &#123; Console.Write(Pop()); &#125;,</div><div class="line">    [OpCode.If] = If,</div><div class="line">    [OpCode.ReadLine] = () =&gt; &#123; Push(Console.ReadLine()); &#125;,</div><div class="line">    [OpCode.Call] = Call,</div><div class="line">    [OpCode.Return] = Return,</div><div class="line">    [OpCode.Exit] = () =&gt; &#123; instructionPointer = opcodeListLength; &#125;,</div><div class="line">    [OpCode.Assign] = () =&gt; &#123;</div><div class="line">        var value = Pop();</div><div class="line">        var name = Pop();</div><div class="line">        scope.AddValue(name, value);</div><div class="line">    &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<h2 id="实现定义域（Scope）"><a href="#实现定义域（Scope）" class="headerlink" title="实现定义域（Scope）"></a>实现定义域（Scope）</h2><p>一般来说</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  int a = 1;</div><div class="line">  &#123;</div><div class="line">  	int a = 2;</div><div class="line">    print a;</div><div class="line">  &#125;</div><div class="line">  print a;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>的输出会是<code>2 1</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  int a = 1;</div><div class="line">  &#123;</div><div class="line">  	print a;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>的输出会是<code>1</code>。</p>
+<p>在C中，一对花括号就构成了一个定义域。内层的变量声明会覆盖掉外层的声明，而内层的定义域 可以访问在外层定义域声明的变量。那么，如何实现这样的效果呢？我们可以简单地用表束结构实现：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">public class Scope</div><div class="line">&#123;</div><div class="line">    public readonly Dictionary&lt;string, dynamic&gt; VariableObjects = new Dictionary&lt;string, dynamic&gt;();</div><div class="line">    public Scope ParentScope &#123; get; set; &#125;</div><div class="line"></div><div class="line">    public dynamic GetValue(string varName) &#123;</div><div class="line">        var current = this;</div><div class="line">        while (current != null) &#123;</div><div class="line">            if (current.VariableObjects.ContainsKey(varName)) &#123;</div><div class="line">                return current.VariableObjects[varName];</div><div class="line">            &#125;</div><div class="line">            current = current.ParentScope;</div><div class="line">        &#125;</div><div class="line">        return null;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void AddValue(string varName, dynamic value) &#123;</div><div class="line">        VariableObjects.Add(varName, value);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这样就实现了一个最简单的定义域。</p>
+<h2 id="简单的代码优化"><a href="#简单的代码优化" class="headerlink" title="简单的代码优化"></a>简单的代码优化</h2><p>下面我们实现一个最简单的常量折叠算法。简单来说就是把一些在运行前就能确定值的计算早运行前计算好，在运行的时候就不需要进行对应的计算了。</p>
+<p>比如上文提到的例子</p>
+<p>执行前的指令是这样的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">3</div><div class="line">2</div><div class="line">Mul</div><div class="line">1</div><div class="line">Add</div><div class="line">Print</div></pre></td></tr></table></figure>
+<p>优化后变成这样</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">7</div><div class="line">Print</div></pre></td></tr></table></figure>
+<p>这样，需要执行的指令数就从3变成了1，运行速度得到了一点点的提高(。﹏。*)。</p>
+<p>那怎么实现它呢？我们可以从头至尾扫描整个需要运行的程序，如果发现是<code>数字</code> <code>数字</code> <code>运算符</code> 的形式，那么就把这三个指令替换成对应的计算结果就好啦。</p>
+<p>首先实现一个判断当前操作数是不是数字的函数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">private static bool IsNumber(dynamic a) &#123;</div><div class="line">    return a is short || a is int || a is long</div><div class="line">           || a is float || a is double;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>然后就可以开始实现整个优化算法了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line">private static void ConstantFolding(IList&lt;dynamic&gt; opcodeList) &#123;</div><div class="line">    var i = 0;</div><div class="line">    while (i &lt; opcodeList.Count - 2) &#123;</div><div class="line">        var op1 = opcodeList[i];</div><div class="line">        var op2 = opcodeList[i + 1];</div><div class="line">        var op3 = opcodeList[i + 2];</div><div class="line">        if (IsNumber(op1) &amp;&amp; IsNumber(op2)</div><div class="line">                &amp;&amp; (op3 is OpCode </div><div class="line">                &amp;&amp; (op3 == OpCode.Add || op3 == OpCode.Sub || op3 == OpCode.Mul || op3 == OpCode.Div))) &#123;</div><div class="line">            dynamic result = null;</div><div class="line">            switch ((OpCode)op3) &#123;</div><div class="line">                case OpCode.Add:</div><div class="line">                    result = op1 + op2;</div><div class="line">                    break;</div><div class="line">                case OpCode.Sub:</div><div class="line">                    result = op1 - op2;</div><div class="line">                    break;</div><div class="line">                case OpCode.Mul:</div><div class="line">                    result = op1 * op2;</div><div class="line">                    break;</div><div class="line">                case OpCode.Div:</div><div class="line">                    result = op1 / op2;</div><div class="line">                    break;</div><div class="line">            &#125;</div><div class="line">            opcodeList[i] = result;</div><div class="line">            opcodeList.RemoveAt(i + 1);</div><div class="line">            opcodeList.RemoveAt(i + 1);</div><div class="line">            i = 0;</div><div class="line">        &#125;</div><div class="line">        else &#123;</div><div class="line">            i++;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这样，一个有模有样的<strong>玩具</strong>虚拟机就写得差不多了。有简单的优化，有call/cc机制，能进行简单的四则计算。</p>
+<h2 id="这个虚拟机离真正的虚拟机有多远？"><a href="#这个虚拟机离真正的虚拟机有多远？" class="headerlink" title="这个虚拟机离真正的虚拟机有多远？"></a>这个虚拟机离真正的虚拟机有多远？</h2><p>当然一个真正的工业级虚拟机不可能这么简单。</p>
+<p>首先，现代的虚拟机一般都是带JIT（Just-in-time）编译的。 简单来说就是，运行程序，收集一定的数据之后，就开始把这些bytecode编译成native code，以提高下一次运行的性能。LuaJIT就是专门为Lua设计的一个支持JIT的虚拟机，性能提高了不止一星半点。</p>
+<p>但其实JIT编译也是有开销的。首先，JIT编译之前，在程序运行时需要进行profiling以收集运行时数据，这会降低运行的性能。其次，JIT编译本身也需要消耗计算时间和存储空间。并且，JIT编译在运行时发生，所以不可能用上过于“重型”的优化算法，有可能会降低生成代码的质量。最后，进行了JIT编译的程序，有可能永远不会再被执行，浪费了之前做的准备工作和编译花费。</p>
+<p>（一般JIT编译分为两种，基于trace的JIT编译和基于method的JIT编译。在此就不展开说了。）</p>
+<p>那么怎么解决这个看似矛盾的问题呢？一般的方案就是，先解释执行程序，在这个过程中收集数据为后续优化做准备。然后进行简单的JIT编译，然后在进行更加“重型”的优化编译。</p>
+<p>我们的虚拟机除了没有JIT之外，其实还缺少很多东西。比如优化算法不完整（还有很多优化要做，具体的参考鲸书）；还依赖于C#提供的dynamic类型（这是为了简化设计。可以考虑使用类型字典实现的伪type traits来避免使用dynamic关键字）。还有很多不一一列举了。</p>
+<p>在此推荐大家看看一些常见虚拟机的实现。</p>
+<ul>
+<li>CLR，<a href="https://github.com/dotnet/coreclr" target="_blank" rel="external">https://github.com/dotnet/coreclr</a></li>
+<li>DLR，<a href="https://github.com/IronLanguages/dlr" target="_blank" rel="external">https://github.com/IronLanguages/dlr</a></li>
+<li>Hotspot VM，<a href="http://openjdk.java.net/groups/hotspot/" target="_blank" rel="external">http://openjdk.java.net/groups/hotspot/</a></li>
+<li>LuaJIT，<a href="http://luajit.org/luajit.html" target="_blank" rel="external">http://luajit.org/luajit.html</a></li>
+<li>即将开源的JavaScript引擎Chakra，<a href="https://github.com/Microsoft/Chakra-Samples" target="_blank" rel="external">https://github.com/Microsoft/Chakra-Samples</a></li>
+</ul>
+
+    </section>
+    <footer class="post-footer">
+      <section class="author">
+    <h4>fuis</h4>
+    <p>A programmer which likes exploring.</p>
+</section>
+      <section class="share">
+    <h4>Share this post</h4>
+    <a class="icon-twitter" href="http://twitter.com/share?url=https://yangfan789.github.io/2016/01/01/how-to-impl-a-virtual-machine/"
+       onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+        <span class="hidden">Twitter</span>
+    </a>
+    <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https://yangfan789.github.io/2016/01/01/how-to-impl-a-virtual-machine/"
+       onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+        <span class="hidden">Facebook</span>
+    </a>
+    <a class="icon-google-plus" href="https://plus.google.com/share?url=https://yangfan789.github.io/2016/01/01/how-to-impl-a-virtual-machine/"
+       onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+        <span class="hidden">Google+</span>
+    </a>
+</section>
+    </footer>
+  </article>
+  <nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/2016/05/11/fuis-book-list/">
+        ← 好看的书
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/2015/11/19/how-to-design-and-write-json-lib/">
+        怎样实现一个JSON库 →
+    </a>
+    
+</nav>
+  <div id="comment" class="comments-area">
+    <h1 class="title"><a href="#disqus_comments" name="disqus_comments">Comments</a></h1>
+
+    
+</div>
+</main>
+
+
+  
+<footer class="site-footer">
+  
+  <div class="inner">
+     <section class="copyright">All content copyright <a href="/">fuis</a> &copy; 2014 &bull; All rights reserved.</section>
+     <section class="poweredby">Proudly published with <a class="icon-ghost" href="http://zespia.tw/hexo/">Hexo</a></section>
+  </div>
+</footer>
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+<script type="text/javascript" src="/js/jquery.fitvids.js"></script>
+<script type="text/javascript" src="/js/index.js"></script>
+
+
+
+
+
+
+</body>
+</html>
