@@ -4,8 +4,8 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-  <title>Basics of Functional Programming | fuis</title>
-  <meta name="description" content="A programmaer which likes exploring" />
+  <title>简单说说函数式编程 | 饭米</title>
+  <meta name="description" content="热爱探索" />
   <meta name="HandheldFriendly" content="True" />
   <meta name="MobileOptimized" content="320" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -13,7 +13,7 @@
   <link rel="stylesheet" type="text/css" href="/css/screen.css" />
   <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noto+Serif:400,700,400italic|Open+Sans:700,400" />
 
-  <meta name="generator" content="fuis">
+  <meta name="generator" content="饭米">
 
   
   
@@ -29,8 +29,8 @@
     <div class="vertical">
         <div class="site-head-content inner">
              <a class="blog-logo" href="/"><img src="http://o6zxfsw0t.bkt.clouddn.com/16-9-3/66438623.jpg" alt="Blog Logo"/></a> 
-            <h1 class="blog-title">fuis</h1>
-            <h2 class="blog-description">A programmaer which likes exploring</h2>
+            <h1 class="blog-title">饭米</h1>
+            <h2 class="blog-description">热爱探索</h2>
         </div>
     </div>
 </header>
@@ -45,11 +45,11 @@
     
     
     | 
-    <a href='/tags/函数式编程/'>函数式编程</a>
+    <a href='/tags/intro/'>intro</a>
     
     
 </span>
-    <h1 class="post-title">Basics of Functional Programming</h1>
+    <h1 class="post-title">简单说说函数式编程</h1>
     <section class="post-content">
       <p><em>Written by fuis. 2016.5.22 YangFan789@outlook.com</em></p>
 <h2 id="本文内容"><a href="#本文内容" class="headerlink" title="本文内容"></a>本文内容</h2><ul>
@@ -68,11 +68,7 @@
 <h2 id="什么是函数式编程"><a href="#什么是函数式编程" class="headerlink" title="什么是函数式编程"></a>什么是函数式编程</h2><p>函数式编程（Functional programming，简称FP）是一种编程范式（另外两种常见的编程范式是声明式编程（Declarative programming）和过程式编程（Procedural programming）））。FP有下面几个特点（包括但不限于）：</p>
 <ul>
 <li>FP避免保存状态。</li>
-</ul>
-<ul>
 <li>FP讲究通过函数的组合，变换，来得到新的函数。</li>
-</ul>
-<ul>
 <li>相对于常见的过程式编程来说，FP更加强调结果，而不是运算的过程（当然，这并不意味着常见的FP语言运行起来很慢，相反，会比很多动态语言快得多）。</li>
 </ul>
 <p>一般来说，FP语言分成两派，ML和LISP派。包括但不限于：</p>
@@ -106,16 +102,16 @@
 <ul>
 <li>C中的过程式编程</li>
 </ul>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> <span class="keyword">int</span> len = <span class="number">5</span>;    </div><div class="line"><span class="keyword">int</span> <span class="built_in">list</span>[] = &#123; <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span> &#125;;</div><div class="line"><span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; len; i++)</div><div class="line">&#123;</div><div class="line">    <span class="built_in">list</span>[i] += <span class="number">2</span>;</div><div class="line">    <span class="built_in">printf</span>(<span class="string">"%d "</span>, <span class="built_in">list</span>[i]);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> len = <span class="number">5</span>;</span><br><span class="line"><span class="keyword">int</span> <span class="built_in">list</span>[] = &#123; <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span> &#125;;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; len; i++)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">list</span>[i] += <span class="number">2</span>;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"%d "</span>, <span class="built_in">list</span>[i]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <ul>
 <li><p>C#，传统语言中的函数式编程</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Console.WriteLine(</div><div class="line">    new[] &#123;1, 2, 3, 4, 5&#125;.Select(x =&gt; x + 2)</div><div class="line">);</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Console.WriteLine(</span><br><span class="line">    new[] &#123;1, 2, 3, 4, 5&#125;.Select(x =&gt; x + 2)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>Haskell，ML派</p>
-<figure class="highlight haskell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="title">print</span> map (+ <span class="number">2</span>) [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]</div></pre></td></tr></table></figure>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">print</span> map (+ <span class="number">2</span>) [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>Clojure，Lisp派</p>
-<figure class="highlight clojure"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">(<span class="name">print</span> (<span class="name"><span class="builtin-name">map</span></span> #(<span class="name"><span class="builtin-name">+</span></span> % <span class="number">2</span>) [<span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">4</span> <span class="number">5</span>]))</div></pre></td></tr></table></figure>
+<figure class="highlight clojure"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(<span class="name">print</span> (<span class="name"><span class="builtin-name">map</span></span> #(<span class="name"><span class="builtin-name">+</span></span> % <span class="number">2</span>) [<span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">4</span> <span class="number">5</span>]))</span><br></pre></td></tr></table></figure>
 </li>
 </ul>
 <h2 id="为什么要用函数式编程"><a href="#为什么要用函数式编程" class="headerlink" title="为什么要用函数式编程"></a>为什么要用函数式编程</h2><ol>
@@ -124,28 +120,22 @@
 <li>写起来比较好看，代码变得更加可读了。</li>
 </ol>
 <p>基于很多的好处，越来越多的语言开始加入了这一范式。</p>
-<h3 id="号外：为什么说无锁也是一种锁"><a href="#号外：为什么说无锁也是一种锁" class="headerlink" title="号外：为什么说无锁也是一种锁"></a>号外：为什么说无锁也是一种锁</h3><p>lock-free的数据结构，都要靠CAS（Compare and swap）这个硬件同步原语。然而，在x86中，就是用lock实现的CAS。 </p>
+<h3 id="号外：为什么说无锁也是一种锁"><a href="#号外：为什么说无锁也是一种锁" class="headerlink" title="号外：为什么说无锁也是一种锁"></a>号外：为什么说无锁也是一种锁</h3><p>lock-free的数据结构，都要靠CAS（Compare and swap）这个硬件同步原语。然而，在x86中，就是用lock实现的CAS。</p>
 <p><img src="http://o6zxfsw0t.bkt.clouddn.com/16-5-22/76612525.jpg" alt=""></p>
 <p>好，下面介绍函数式编程里的一些基本概念。</p>
 <h2 id="函数式编程的基本概念"><a href="#函数式编程的基本概念" class="headerlink" title="函数式编程的基本概念"></a>函数式编程的基本概念</h2><h3 id="函数类型的表示方法"><a href="#函数类型的表示方法" class="headerlink" title="函数类型的表示方法"></a>函数类型的表示方法</h3><p>为了方便和可读，我选用一种类C#的对函数类型的记法<code>Func&lt;TArg1, TArg2, ..., TArgN, TResult&gt;</code>来表示一个函数的类型。</p>
 <p>比如</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">long</span> <span class="title">f</span><span class="params">(<span class="keyword">int</span> x)</span></span>&#123;</div><div class="line">    <span class="keyword">return</span> x;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">long</span> <span class="title">f</span><span class="params">(<span class="keyword">int</span> x)</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> x;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>的类型是<code>Func&lt;int, long&gt;</code></p>
 <p>而</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">(k, b) =&gt; x =&gt; x * k + b <span class="comment">//假设这些变量都是int类型的</span></div></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(k, b) =&gt; <span class="function"><span class="params">x</span> =&gt;</span> x * k + b <span class="comment">//假设这些变量都是int类型的</span></span><br></pre></td></tr></table></figure>
 <p>的类型是<code>Func&lt;int, int, Func&lt;int, int&gt;&gt;</code></p>
 <h3 id="λ表达式"><a href="#λ表达式" class="headerlink" title="λ表达式"></a>λ表达式</h3><p>在实用编程界中，λ（lambda）表达式就是匿名函数。</p>
 <p>那么对于<code>f(x) = x</code>这个函数</p>
 <ul>
 <li>在ECMAScript中就是<code>function(x) { return x; }</code>或者<code>x =&gt; x</code></li>
-</ul>
-<ul>
 <li>C#中的<code>x =&gt; x</code></li>
-</ul>
-<ul>
 <li>Java8中的<code>x -&gt; x</code></li>
-</ul>
-<ul>
 <li>Haskell中的<code>(\x -&gt; x)</code>（话说，<code>(\</code>是不是很像<code>λ</code>这个符号）</li>
 <li>C++中的<code>[](int x){ return x; }</code></li>
 </ul>
@@ -153,39 +143,39 @@
 <p>因为函数也是值，所以可以给它绑定上一个名字。比如<code>var f = x =&gt; x;</code>给<code>x =&gt; x</code>这个函数，绑定上了一个名字<code>f</code>。</p>
 <h3 id="闭包"><a href="#闭包" class="headerlink" title="闭包"></a>闭包</h3><p>如果一个函数，<strong>总能</strong>访问到他所需要的上下文，那这个函数就与所需的上下文组成了一个闭包。</p>
 <p>比如</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> makeLine = (k, b) =&gt; x =&gt; x * k + b;</div><div class="line"><span class="keyword">var</span> y = makeLine(<span class="number">1</span>, <span class="number">2</span>); <span class="comment">// y(x) = x + 2</span></div><div class="line"><span class="keyword">var</span> y0 = y(<span class="number">3</span>); <span class="comment">// y0 == 5</span></div></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> makeLine = <span class="function">(<span class="params">k, b</span>) =&gt;</span> x =&gt; x * k + b;</span><br><span class="line"><span class="keyword">var</span> y = makeLine(<span class="number">1</span>, <span class="number">2</span>); <span class="comment">// y(x) = x + 2</span></span><br><span class="line"><span class="keyword">var</span> y0 = y(<span class="number">3</span>); <span class="comment">// y0 == 5</span></span><br></pre></td></tr></table></figure>
 <p>在这里，<code>makeLine</code>就同<code>1</code>和<code>2</code>组成了一个闭包<code>y</code>。</p>
 <h3 id="柯里化和部分应用"><a href="#柯里化和部分应用" class="headerlink" title="柯里化和部分应用"></a>柯里化和部分应用</h3><p>我们把上面这个<code>makeLine</code>的例子进行变换，得到</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> makeLine = k =&gt; b =&gt; x =&gt; x * k + b;</div><div class="line"><span class="keyword">var</span> y = makeLine(<span class="number">1</span>)(<span class="number">2</span>);</div><div class="line"><span class="keyword">var</span> y0 = y(<span class="number">3</span>);</div></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> makeLine = <span class="function"><span class="params">k</span> =&gt;</span> b =&gt; <span class="function"><span class="params">x</span> =&gt;</span> x * k + b;</span><br><span class="line"><span class="keyword">var</span> y = makeLine(<span class="number">1</span>)(<span class="number">2</span>);</span><br><span class="line"><span class="keyword">var</span> y0 = y(<span class="number">3</span>);</span><br></pre></td></tr></table></figure>
 <p>这便是函数的柯里化（Currying），把一个接受<code>N</code>个参数的函数，变换成接受一个参数的并且返回一个接受余下<code>N-1</code>个参数的函数。</p>
 <p>让我们再看看别的例子。对于这个函数：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> add = (a, b) =&gt; a + b;</div><div class="line"><span class="keyword">var</span> three = add(<span class="number">1</span>, <span class="number">2</span>);</div></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> add = <span class="function">(<span class="params">a, b</span>) =&gt;</span> a + b;</span><br><span class="line"><span class="keyword">var</span> three = add(<span class="number">1</span>, <span class="number">2</span>);</span><br></pre></td></tr></table></figure>
 <p>柯里化后：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> add = a =&gt; b =&gt; a + b;</div><div class="line"><span class="keyword">var</span> three = add(<span class="number">1</span>)(<span class="number">2</span>);</div></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> add = <span class="function"><span class="params">a</span> =&gt;</span> b =&gt; a + b;</span><br><span class="line"><span class="keyword">var</span> three = add(<span class="number">1</span>)(<span class="number">2</span>);</span><br></pre></td></tr></table></figure>
 <p>对一个柯里化的函数，我们便可以执行部分应用（partial application）。</p>
 <p>比如<code>add(2)</code>便是一个可以给一个数字，加上<code>2</code>的函数。这些部分应用的函数有什么用呢？</p>
 <p>先说说<code>map</code>这个函数。map可以对序列<code>seq</code>中的每个元素应用操作<code>f</code>，并且返回应用操作后的序列。</p>
 <p>即</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">//Language: C#</div><div class="line">seq.Select(x =&gt; f(x))</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">//Language: C#</span><br><span class="line">seq.Select(x =&gt; f(x))</span><br></pre></td></tr></table></figure>
 <p>简写后为</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">//Language: C#</div><div class="line">seq.Select(f)</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">//Language: C#</span><br><span class="line">seq.Select(f)</span><br></pre></td></tr></table></figure>
 <p>根据这个定义，我们可以亲手实现它：</p>
-<figure class="highlight haskell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment">-- Language: Haskell</span></div><div class="line"><span class="comment">-- 因为Haskell已经有了一个map函数的定义，所以我们给他一个map'的名字</span></div><div class="line"><span class="title">map'</span> :: (a -&gt; b) -&gt; [a] -&gt; [b]</div><div class="line"><span class="title">map'</span> f [] = []</div><div class="line"><span class="title">map'</span> f (x: xs) = f x: map' f xs</div></pre></td></tr></table></figure>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- Language: Haskell</span></span><br><span class="line"><span class="comment">-- 因为Haskell已经有了一个map函数的定义，所以我们给他一个map'的名字</span></span><br><span class="line"><span class="title">map'</span> :: (a -&gt; b) -&gt; [a] -&gt; [b]</span><br><span class="line"><span class="title">map'</span> f [] = []</span><br><span class="line"><span class="title">map'</span> f (x: xs) = f x: map' f xs</span><br></pre></td></tr></table></figure>
 <p>或者是：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//Language: ECMAScript</span></div><div class="line"><span class="keyword">var</span> map = (f, seq) =&gt; &#123;</div><div class="line">    <span class="keyword">if</span> (seq.length === <span class="number">0</span>) <span class="keyword">return</span> []</div><div class="line">    <span class="keyword">return</span> [f(seq[<span class="number">0</span>])].concat(map(f, seq.slice(<span class="number">1</span>, seq.length)))</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Language: ECMAScript</span></span><br><span class="line"><span class="keyword">var</span> map = <span class="function">(<span class="params">f, seq</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (seq.length === <span class="number">0</span>) <span class="keyword">return</span> []</span><br><span class="line">    <span class="keyword">return</span> [f(seq[<span class="number">0</span>])].concat(map(f, seq.slice(<span class="number">1</span>, seq.length)))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>然后使用一个部分应用的函数对这个序列进行变换。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//Language: ECMAScript</span></div><div class="line"><span class="keyword">var</span> add = a =&gt; b =&gt; a + b;</div><div class="line"><span class="keyword">var</span> arr = map(add(<span class="number">1</span>), [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>])</div><div class="line"><span class="built_in">console</span>.log(arr) <span class="comment">//[2, 3, 4, 5, 6]</span></div></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Language: ECMAScript</span></span><br><span class="line"><span class="keyword">var</span> add = <span class="function"><span class="params">a</span> =&gt;</span> b =&gt; a + b;</span><br><span class="line"><span class="keyword">var</span> arr = map(add(<span class="number">1</span>), [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>])</span><br><span class="line"><span class="built_in">console</span>.log(arr) <span class="comment">//[2, 3, 4, 5, 6]</span></span><br></pre></td></tr></table></figure>
 <h3 id="模式匹配"><a href="#模式匹配" class="headerlink" title="模式匹配"></a>模式匹配</h3><p>比如我们要写一个<code>Fibonacci</code>函数（就是斐波那契数列函数）：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Language: JavaScript</span></div><div class="line"><span class="keyword">var</span> fib = n =&gt; &#123;</div><div class="line">    <span class="keyword">if</span> (n === <span class="number">0</span>) <span class="keyword">return</span> <span class="number">0</span></div><div class="line">    <span class="keyword">if</span> (n === <span class="number">1</span>) <span class="keyword">return</span> <span class="number">1</span></div><div class="line">    <span class="keyword">return</span> fib(n - <span class="number">1</span>) + fib(n - <span class="number">2</span>)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Language: JavaScript</span></span><br><span class="line"><span class="keyword">var</span> fib = <span class="function"><span class="params">n</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (n === <span class="number">0</span>) <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">    <span class="keyword">if</span> (n === <span class="number">1</span>) <span class="keyword">return</span> <span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> fib(n - <span class="number">1</span>) + fib(n - <span class="number">2</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>用模式匹配改写：</p>
-<figure class="highlight haskell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment">-- Language: Haskell</span></div><div class="line"><span class="title">fib</span> <span class="number">0</span> = <span class="number">0</span></div><div class="line"><span class="title">fib</span> <span class="number">1</span> = <span class="number">1</span></div><div class="line"><span class="title">fib</span> n = fib(n - <span class="number">1</span>) + fib(n - <span class="number">2</span>)</div></pre></td></tr></table></figure>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- Language: Haskell</span></span><br><span class="line"><span class="title">fib</span> <span class="number">0</span> = <span class="number">0</span></span><br><span class="line"><span class="title">fib</span> <span class="number">1</span> = <span class="number">1</span></span><br><span class="line"><span class="title">fib</span> n = fib(n - <span class="number">1</span>) + fib(n - <span class="number">2</span>)</span><br></pre></td></tr></table></figure>
 <p>Python里也有类似的应用。比如经常被拿出来说的交换变量（然而并没有什么卵用）：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">a, b = b, a</div></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a, b = b, a</span><br></pre></td></tr></table></figure>
 <h3 id="CPS变换"><a href="#CPS变换" class="headerlink" title="CPS变换"></a>CPS变换</h3><p>CPS变换（Continuation-Passing Style transformation）可以把程序内部的逻辑抽离出来暴露给外部。</p>
 <p>例子：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">add2</span>(<span class="params">x</span>) </span>&#123;</div><div class="line">    <span class="keyword">return</span> x + <span class="number">2</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">var</span> a = add2(<span class="number">3</span>) <span class="comment">//a === 5</span></div></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">add2</span>(<span class="params">x</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> x + <span class="number">2</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> a = add2(<span class="number">3</span>) <span class="comment">//a === 5</span></span><br></pre></td></tr></table></figure>
 <p>变换后:</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">add2</span>(<span class="params">x, f</span>) </span>&#123;</div><div class="line">    <span class="keyword">return</span> f(x)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">var</span> a = add2(<span class="number">3</span>, x =&gt; x + <span class="number">2</span>) <span class="comment">//a === 5</span></div></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">add2</span>(<span class="params">x, f</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> f(x)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> a = add2(<span class="number">3</span>, x =&gt; x + <span class="number">2</span>) <span class="comment">//a === 5</span></span><br></pre></td></tr></table></figure>
 <h3 id="Y-Combinator"><a href="#Y-Combinator" class="headerlink" title="Y-Combinator"></a>Y-Combinator</h3><p>首先让我们思考，怎么只利用λ表达式递归实现Fibonacci函数。由于λ表达式是匿名的，因此不能直接调用它本身。这时候，就需要Y-Combinator。</p>
 <p>Y-Combinator是一种最简单的不动点组合子。形式很简单，即<code>Y(f) = f(Y(f))</code></p>
 <p>Y-Combinator使得λ表达式可以被递归调用而不需要给它本身一个名字，保证了λ表达式的匿名性。</p>
@@ -194,12 +184,12 @@
 <p>现在我们就可以实现这个组合子了。</p>
 <p>（由于C#不支持可变数量的类型参数，因此需要自己手动展开，在此不表。）</p>
 <p>实现：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">public class F&lt;TArg1, TResult&gt;</div><div class="line">&#123;</div><div class="line">    private readonly Func&lt;Func&lt;TArg1, TResult&gt;, Func&lt;TArg1, TResult&gt;&gt;  _func;</div><div class="line"></div><div class="line">    public F(Func&lt;Func&lt;TArg1, TResult&gt;, Func&lt;TArg1, TResult&gt;&gt; func) &#123;</div><div class="line">        _func = func;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private TResult Invoke(TArg1 arg1) &#123;</div><div class="line">        return _func(ToFunc())(arg1);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public Func&lt;TArg1, TResult&gt; ToFunc() &#123;</div><div class="line">        return Invoke;</div><div class="line">    &#125; </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">public class F&lt;TArg1, TResult&gt;</span><br><span class="line">&#123;</span><br><span class="line">    private readonly Func&lt;Func&lt;TArg1, TResult&gt;, Func&lt;TArg1, TResult&gt;&gt;  _func;</span><br><span class="line"></span><br><span class="line">    public F(Func&lt;Func&lt;TArg1, TResult&gt;, Func&lt;TArg1, TResult&gt;&gt; func) &#123;</span><br><span class="line">        _func = func;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private TResult Invoke(TArg1 arg1) &#123;</span><br><span class="line">        return _func(ToFunc())(arg1);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public Func&lt;TArg1, TResult&gt; ToFunc() &#123;</span><br><span class="line">        return Invoke;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>使用：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">new F&lt;int, int&gt;(</div><div class="line">    fib =&gt; x =&gt; &#123;</div><div class="line">        if (x == 0) &#123;</div><div class="line">            return 0;</div><div class="line">        &#125;</div><div class="line">        if (x == 1) &#123;</div><div class="line">            return 1;</div><div class="line">        &#125;</div><div class="line">        return fib(x - 1) + fib(x - 2);</div><div class="line">    &#125;</div><div class="line">);</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">new F&lt;int, int&gt;(</span><br><span class="line">    fib =&gt; x =&gt; &#123;</span><br><span class="line">        if (x == 0) &#123;</span><br><span class="line">            return 0;</span><br><span class="line">        &#125;</span><br><span class="line">        if (x == 1) &#123;</span><br><span class="line">            return 1;</span><br><span class="line">        &#125;</span><br><span class="line">        return fib(x - 1) + fib(x - 2);</span><br><span class="line">    &#125;</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
 <p>这样便实现了λ表达式的自身递归调用。</p>
-<p>最后安利一发我给C#6写的模式匹配库，上面说的这些几乎都用到了</p>
-<p><a href="https://github.com/YangFan789/PatternMatchingExtension" target="_blank" rel="external">YangFan789/PatternMatchingExtension</a></p>
+<p>最后安利一发我给C# 6写的模式匹配库，上面说的这些几乎都用到了</p>
+<p><a href="https://github.com/YangFan789/PatternMatchingExtension" target="_blank" rel="noopener">YangFan789/PatternMatchingExtension</a></p>
 
     </section>
     <footer class="post-footer">
@@ -245,7 +235,7 @@
 <footer class="site-footer">
   
   <div class="inner">
-     <section class="copyright">All content copyright <a href="/">fuis</a> &copy; 2014 &bull; All rights reserved.</section>
+     <section class="copyright">All content copyright <a href="/">饭米</a> &copy; 2014 &bull; All rights reserved.</section>
      <section class="poweredby">Proudly published with <a class="icon-ghost" href="http://zespia.tw/hexo/">Hexo</a></section>
   </div>
 </footer>
