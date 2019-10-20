@@ -59,12 +59,12 @@
 <p>UTC 所基于的 UT1 时间尺度由地球绕其轴线的旋转确定。地球自转相对于国际原子时（TAI）逐渐减慢。 为了使 UTC 相对于 TAI 合理化，按照国际地球自转服务（IERS）的规定，以约 18 个月的间隔插入闰秒。 NTP 时间刻度中的闰秒计算在 <a href="http://www.eecis.udel.edu/~mills/leap.html" target="_blank" rel="noopener">The NTP Timescale and Leap Seconds</a> 中进行了描述。</p>
 <p>历史插入记录在 <code>leap-seconds.list</code> 文件中，可以从 NIST FTP 服务器下载。 此文件的更新间隔不超过六个月。 国家实验室以广播时间码格式传播闰秒警告。 这些警告通过 NTP 线上协议从 NTP 主服务器通过其他服务器传播到客户端。 闰秒由操作系统内核实现，如白皮书<a href="http://www.eecis.udel.edu/~mills/leap.html" target="_blank" rel="noopener">NTP Timescale</a> 和 <a href="http://www.eecis.udel.edu/~mills/leap.html" target="_blank" rel="noopener">Leap Seconds</a> 中所述。 实施细节在 <a href="https://www.eecis.udel.edu/~mills/ntp/html/leap.html" target="_blank" rel="noopener">Leap Second Processing</a> 页面中描述。</p>
 <blockquote>
-<p><img src="ntp.assets/time1.gif" alt="gif"></p>
+<p><img src="/ntp.assets/time1.gif" alt="gif"></p>
 <p>图 1：NTP 数据格式</p>
 </blockquote>
 <p>图 1 显示了两种 NTP 时间格式，64 位 timestamp 格式和 128 位 datestamp  格式。 Datestamp 格式在内部使用，而 timestamp 格式用于客户端和服务器之间交换的数据包标头。 Timestamp 格式跨越 136 年，称为时代。 当前时代始于 1900 年 1 月 1 日，而下一个时代始于 2036 年。有关这些格式和转换的详细信息，请参阅白皮书 <a href="http://www.eecis.udel.edu/~mills/y2k.html" target="_blank" rel="noopener">The NTP Era and Era Numbering</a>。 但是，只要系统时钟最初设置为正确时间的 68 年内，NTP 协议将无论时代如何，都能正确同步。 有关此问题的进一步讨论，请参阅白皮书 <a href="http://www.eecis.udel.edu/~mills/time.html" target="_blank" rel="noopener">NTP Timestamp Calculations</a>。 通常，应用程序不知道这些格式，应用程序将这些 NTP 格式转换为本机 Unix 或 Windows 格式。</p>
 <h2 id="架构和算法"><a href="#架构和算法" class="headerlink" title="架构和算法"></a>架构和算法</h2><blockquote>
-<p><img src="ntp.assets/fig_3_1.gif" alt="gif"></p>
+<p><img src="/ntp.assets/fig_3_1.gif" alt="gif"></p>
 <p>图 2：NTP 后台程序流程和算法</p>
 </blockquote>
 <p>NTP 体系结构的整体组织如图 2 所示。在此上下文中，将实现视为上游（下层）服务器的客户端和下游（更高层）客户端的服务器非常有用。 它包括用作每个参考时钟的一对 peer/poll 进程或用作同步源的远程服务器。 使用 <a href="http://www.eecis.udel.edu/~mills/onwire.html" target="_blank" rel="noopener">Analysis and Simulation of the NTP On-Wire Protocols</a> 中描述的协议在客户端和服务器之间交换数据包。 该协议可以抵御数据包的丢失，重放或欺骗。</p>

@@ -52,14 +52,14 @@
     <h1 class="post-title">时钟规划算法</h1>
     <section class="post-content">
       <p>原文： <a href="https://www.eecis.udel.edu/~mills/ntp/html/discipline.html" target="_blank" rel="noopener">Clock Discipline Algorithm</a></p>
-<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>NTP 规范和参考实现的核心是时钟规则算法，最好将其描述为一个自适应参数并混合相位与频率锁定的反馈回路。它是一种精心设计的算法，可自动调整以得到最佳性能，同时最大限度地减少网络开销。 </p>
+<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>NTP 规范和参考实现的核心是时钟规则算法，最好将其描述为一个自适应参数并混合相位与频率锁定的反馈回路。它是一种精心设计的算法，可自动调整以得到最佳性能，同时最大限度地减少网络开销。</p>
 <p>操作有两种模式：</p>
 <ul>
 <li>锁相回路（PLL，phase-lock loop），当轮询间隔（$\mathit{poll\ interval}$）低于 Allan 截距（默认为 $2048$ 秒）时使用</li>
 <li>频锁回路（FLL，frequency-lock loop），当轮询间隔大于等于 Allan 截距时使用（译注：这里的“大于等于”是在 NTP 参考实现里的代码获取的）</li>
 </ul>
 <blockquote>
-<p><img src="ntp.assets/discipline.gif" alt="gif"></p>
+<p><img src="/ntp.assets/discipline.gif" alt="gif"></p>
 <p>图 1：时钟规划算法</p>
 </blockquote>
 <h2 id="时钟规划操作"><a href="#时钟规划操作" class="headerlink" title="时钟规划操作"></a>时钟规划操作</h2><p>时钟规划算法的框图如图 1 所示。</p>
