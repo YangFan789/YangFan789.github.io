@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+  <title>Learning SkyBridge | 饭米</title>
+  <meta name="description" content="" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="MobileOptimized" content="320" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="stylesheet" type="text/css" href="/css/screen.css" />
+  <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noto+Serif:400,700,400italic|Open+Sans:700,400" />
+
+  <meta name="generator" content="饭米">
+
+  
+  
+  
+
+  
+</head>
+
+
+<body class="post-template">
+
+  <header class="site-head"  style="background-image: url(http://o6zxfsw0t.bkt.clouddn.com/16-9-3/60020041.jpg)" >
+    <div class="vertical">
+        <div class="site-head-content inner">
+             <a class="blog-logo" href="/"><img src="http://o6zxfsw0t.bkt.clouddn.com/18-1-22/54958982.jpg" alt="Blog Logo"/></a> 
+            <h1 class="blog-title">饭米</h1>
+            <h2 class="blog-description"></h2>
+        </div>
+    </div>
+</header>
+  
+
+<main class="content" role="main">
+  <article class="post">
+    <span class="post-meta">
+      <time datetime="2019-10-20T15:01:54.000Z" itemprop="datePublished">
+          2019-10-20
+      </time>
+    
+    
+    | 
+    <a href='/tags/virt/'>virt</a>
+    
+    
+</span>
+    <h1 class="post-title">Learning SkyBridge</h1>
+    <section class="post-content">
+      <p>fanyang89#outlook.com</p>
+<h2 id="背景知识"><a href="#背景知识" class="headerlink" title="背景知识"></a>背景知识</h2><h3 id="VMFUNC"><a href="#VMFUNC" class="headerlink" title="VMFUNC"></a>VMFUNC</h3><p>位于 VMX 指令集。该指令允许 VMX non-root 模式中的程序对 VM function 进行调用。VM function 由 VMX root 模式中的程序启用并配置。可以根据 EAX 的值确定需要调用的特定 VM 函数。在 VMX non-root 模式外执行 VMFUNC 触发 <code>#UD</code> 异常（Invalid Opcode），当 EAX 大于等于 64 以及 VM function 没有开启时也会触发异常。</p>
+<h3 id="EPT"><a href="#EPT" class="headerlink" title="EPT"></a>EPT</h3><p><img src="https://i.loli.net/2019/10/20/ViFtTHAfkpL6bxn.png" alt="383260-20181213191100562-804873840.png"></p>
+<p>在使用 EPT 后，Guest 内部的 Page Fault、INVLPG（使 TLB 项目失效）指令、对 CR3 寄存器的访问等操作不会引起 VM Exit，降低了运行时 VM Exit 发生的数量，从而提高性能。</p>
+<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>微内核 IPC 的主要开销来源于 Kernel 的参与，包括：</p>
+<ul>
+<li>模式的切换（user space 和 kernel space）</li>
+<li>地址空间的更改</li>
+<li>处理器结构的污染</li>
+</ul>
+<h2 id="思想"><a href="#思想" class="headerlink" title="思想"></a>思想</h2><p><strong>主要思想</strong>：利用硬件虚拟化（VMFUNC）来实现高效的 IPC。</p>
+<p>SkyBridge 在通信过程中不需要内核的参与，允许进程直接切换到目标进程的虚拟地址空间并调用目标函数。SkyBridge 保留了传统的虚拟地址空间映射，因此可以很容易地集成到微内核中。除此之外，SkyBridge 还在原始微内核（SubKernel）下面插入了一个小型的虚拟化层（RootKernel）。RootKernel 经过精心设计，消除了大多数虚拟化开销。SkyBridge 还集成了一系列技术来保证 IPC 的安全性。</p>
+<h2 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h2><ul>
+<li>高效。IPC 路径中无需 kernel 参与</li>
+<li>轻量。IPC 可以被轻易地部署到商用硬件上，或是与已有的微内核架构集成</li>
+<li>安全。IPC 设计上不会破坏微内核的隔离性</li>
+</ul>
+<h2 id="IPC-开销"><a href="#IPC-开销" class="headerlink" title="IPC 开销"></a>IPC 开销</h2><p>IPC 被认为是运行时开销的主要因素，它决定了微内核上应用程序的性能。</p>
+<p>控制流跨越进程边界开销很大，需要：</p>
+<ul>
+<li>syscall</li>
+<li>复制参数</li>
+<li>一次地址空间切换（考虑到 Meltdown，那就是两次）</li>
+<li>返回 userspace</li>
+</ul>
+<p>IPC 的一些异步实现涉及到开销很大的调度。</p>
+<h2 id="已有的-IPC-优化"><a href="#已有的-IPC-优化" class="headerlink" title="已有的 IPC 优化"></a>已有的 IPC 优化</h2><p><strong>基于软件</strong>：通过移除不必要的操作来缩短 IPC 路径。</p>
+<ul>
+<li>seL4：IPC fastpath 适用于 Call 和 ReplyWait system call 的情况。此时 IPC 消息可以被放入 CPU 寄存器内，消息会被立即发送，控制流可以不走调度逻辑被直接传输。</li>
+<li>LRPC：通过允许进程的线程在接收方的地址空间内执行请求的程序来消除调度开销。</li>
+</ul>
+<p>但这些方法仍然需要 kernel 的参与，因此这些 IPC 的性能（往返大概 1000 cycles）不能满足 IPC 密集型工作负载的要求。</p>
+<p><strong>基于硬件</strong>：提出新的硬件扩展以加速 IPC 操作。</p>
+<ul>
+<li>dIPC：将所有的 IPC 参与者放入同个地址空间，IPC 路径上不需要 kernel 的参与。此时进程隔离是通过标记内存实现的。</li>
+</ul>
+<p>这种方案通常需要对软硬件进行 non-trivial 的修改，因此不便用于实际工程。</p>
+<h2 id="设计"><a href="#设计" class="headerlink" title="设计"></a>设计</h2><ul>
+<li>每个进程仍然有自己的虚拟地址空间</li>
+<li>利用 Intel EPT switching （VMFUNC）在用户级别修改虚拟地址空间。通过配置接收者的 EPT，SkyBridge 将发送者的页表映射到接收者的页表。因此通过 VMFUNC 切换 EPT 之后，硬件使用接收者的页表来翻译后续的虚拟地址</li>
+<li>为每个接收者线程提供了一个独立的栈。为了支持 long IPC，SkyBridge 在传输大消息时为 IPC 参与者提供共享缓冲区，每个缓冲区绑定一个接收者的线程</li>
+</ul>
+<h3 id="RootKernel"><a href="#RootKernel" class="headerlink" title="RootKernel"></a>RootKernel</h3><p>RootKernel 可以被理解为一个小型的 Hypervisor，它通过配置硬件来消除 VM exits。RootKernel 被 Subkernel 引导，并将 Subkernel 降级到 non-root 模式。</p>
+<p>下面是可能引起 VM exits 的几种情况，和 RootKernel 应对的方法。</p>
+<ul>
+<li>特权指令退出。如修改 CR3。RootKernel 允许这些指令不触发 VM exits</li>
+<li>硬件事件退出。为了处理传统 Hypervisor 中的外部中断等硬件事件，VM exits 会唤醒 Hypervisor。RootKernel 允许硬件以 non-root 下直接将外部中断注入微内核</li>
+<li>EPT violation。如 VM 访问 EPT 中不存在的物理内存或者没有权限访问时触发，也会唤醒 Hypervisor。为了消除 EPT violation VM exits，降低两层地址转换开销，RookKernel 为 SubKernel 创建一个 base EPT，并且使用最大的 hugepage（在 x86-64 上是 1 GB）来映射大多数物理内存地址到 SubKernel。RootKernel 本身只保留一部分物理内存（100 MB）。因此微内核可以在不触发 EPT violation 的前提下自由访问几乎所有的物理内存。Hugepage mapping 不仅减少处理 TLB miss 的内存访问次数，也减少了 TLB 未命中的次数</li>
+</ul>
+<p>与此同时，RootKernel 还是保留了 VM exits 的处理程序。当前实现中 RootKernel 包含用于 CPUID 指令，VMCALL 指令和 EPT violation 的处理程序。RootKernel 利用 VMCALL 实现与 Subkernel 的通信。</p>
+<h3 id="内存隔离"><a href="#内存隔离" class="headerlink" title="内存隔离"></a>内存隔离</h3><ul>
+<li>SkyBridge 为不同进程使用分离的页表</li>
+<li>为了在用户态不修改 CR3 的情况下切换页表，RootKernel 会将 client 的页表基址（也就是 CR3 的值）重新映射到 server CR3 的 HPA。因此通过调用 VMFUNC 切换 EPT 可以安装 server 的虚拟页表，以便在之后进行虚拟地址转换。</li>
+</ul>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><ul>
+<li>利用 EPT switching 需要虚拟化层，可能会给整个系统带来开销。因为虚拟化层可能会导致大量的 VM exits。SkyBridge 引入了一个小虚拟化层（RootKernel）。RootKernel 仅包含最原始的功能，消除 IPC 过程中的 VM exits</li>
+<li>提供了一种集成到内核中的轻量方法。这种方法可以高效地在不同进程间切换虚拟地址空间。SkyBridge 保证只有一个合法的入口点可以在进程间切换地址空间，防止恶意进程调用自行编写的 VMFUNC 来破坏其他进程。</li>
+<li>在与对端进程通信前需要进行注册，SkyBridge 引入 calling-key table 来实现进程的注册</li>
+</ul>
+
+    </section>
+    <footer class="post-footer">
+      <section class="author">
+    <h4>fuis</h4>
+    <p></p>
+</section>
+      <section class="share">
+    <h4>Share this post</h4>
+    <a class="icon-twitter" href="http://twitter.com/share?url=https://yangfan789.github.io/2019/10/20/learning-skybridge/"
+       onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+        <span class="hidden">Twitter</span>
+    </a>
+    <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https://yangfan789.github.io/2019/10/20/learning-skybridge/"
+       onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+        <span class="hidden">Facebook</span>
+    </a>
+    <a class="icon-google-plus" href="https://plus.google.com/share?url=https://yangfan789.github.io/2019/10/20/learning-skybridge/"
+       onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+        <span class="hidden">Google+</span>
+    </a>
+</section>
+    </footer>
+  </article>
+  <nav class="pagination" role="pagination">
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/2016/05/22/basics-of-functional-programming/">
+        简单说说函数式编程 →
+    </a>
+    
+</nav>
+  <div id="comment" class="comments-area">
+    <h1 class="title"><a href="#disqus_comments" name="disqus_comments">Comments</a></h1>
+
+    
+</div>
+</main>
+
+
+  
+<footer class="site-footer">
+  
+  <div class="inner">
+     <section class="copyright">All content copyright <a href="/">饭米</a> &copy; 2014 &bull; All rights reserved.</section>
+     <section class="poweredby">Proudly published with <a class="icon-ghost" href="http://zespia.tw/hexo/">Hexo</a></section>
+  </div>
+</footer>
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+<script type="text/javascript" src="/js/jquery.fitvids.js"></script>
+<script type="text/javascript" src="/js/index.js"></script>
+
+
+
+
+
+
+</body>
+</html>
