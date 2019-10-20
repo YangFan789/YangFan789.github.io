@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+  <title>NTP 是怎样工作的 | 饭米</title>
+  <meta name="description" content="" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="MobileOptimized" content="320" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="stylesheet" type="text/css" href="/css/screen.css" />
+  <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noto+Serif:400,700,400italic|Open+Sans:700,400" />
+
+  <meta name="generator" content="饭米">
+
+  
+  
+  
+
+  
+</head>
+
+
+<body class="post-template">
+
+  <header class="site-head"  style="background-image: url(https://i.loli.net/2019/10/20/BpIN4caDSChKHMR.jpg)" >
+    <div class="vertical">
+        <div class="site-head-content inner">
+             <a class="blog-logo" href="/"><img src="https://i.loli.net/2019/10/20/aXjNvKWSJbE3wh6.jpg" alt="Blog Logo"/></a> 
+            <h1 class="blog-title">饭米</h1>
+            <h2 class="blog-description"></h2>
+        </div>
+    </div>
+</header>
+  
+
+<main class="content" role="main">
+  <article class="post">
+    <span class="post-meta">
+      <time datetime="2019-10-20T15:31:54.000Z" itemprop="datePublished">
+          2019-10-20
+      </time>
+    
+    
+    | 
+    <a href='/tags/ntp/'>ntp</a>
+    
+    
+</span>
+    <h1 class="post-title">NTP 是怎样工作的</h1>
+    <section class="post-content">
+      <p>原文：<a href="https://www.eecis.udel.edu/~mills/ntp/html/warp.html" target="_blank" rel="noopener">How NTP Works</a></p>
+<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>NTP 时间同步服务在公网中广泛使用。目前，公共 NTP 子网在大多数国家和地球的每个大陆都包括数千台服务器，包括南极洲，有时还包括太空和海底。这些服务器直接或间接支持全球互联网中超过 2500 万台计算机的总人口。</p>
+<p>NTP 子网以层次结构运行，每个级别分配一个层数。最低级别的 Stratum 1（primary）服务器通过卫星，无线电或电话调制解调器直接与国家时间服务同步。下一个更高级别的 Stratum 2（secondary）服务器将与 Stratum 1 服务器同步，依此类推。通常，NTP 客户端和客户端数量相对较少的服务器不会与公共主服务器同步。有数百个公共二级服务器在更高层运行，是首选服务器。</p>
+<p>此页面概述了此软件分发中包含的NTP实现。我们将此实现称为参考实现，因为它用于测试和验证 NTPv4 规范：RFC-5905。最好结合 <a href="http://www.eecis.udel.edu/~mills/ntp.html" target="_blank" rel="noopener">Network Time Synchronization Research Project</a> 上的简报和白皮书阅读。对于管理和规划的执行摘要，可以参见白皮书：<a href="http://www.eecis.udel.edu/~mills/exec.html" target="_blank" rel="noopener">Executive Summary: Computer Network Time Synchronization</a></p>
+<h2 id="NTP-时间刻度和数据格式"><a href="#NTP-时间刻度和数据格式" class="headerlink" title="NTP 时间刻度和数据格式"></a>NTP 时间刻度和数据格式</h2><p>NTP 客户端和服务器与国家实验室使用的协调世界时（UTC）时间表同步，并通过无线电，卫星和电话调制解调器传播。这是一个独立于地理位置的全球时间尺度，没有为当地时区或夏令时进行修正; 但是，这些修正可以由操作系统或者用户来执行。</p>
+<p>UTC 所基于的 UT1 时间尺度由地球绕其轴线的旋转确定。地球自转相对于国际原子时（TAI）逐渐减慢。 为了使 UTC 相对于 TAI 合理化，按照国际地球自转服务（IERS）的规定，以约 18 个月的间隔插入闰秒。 NTP 时间刻度中的闰秒计算在 <a href="http://www.eecis.udel.edu/~mills/leap.html" target="_blank" rel="noopener">The NTP Timescale and Leap Seconds</a> 中进行了描述。</p>
+<p>历史插入记录在 <code>leap-seconds.list</code> 文件中，可以从 NIST FTP 服务器下载。 此文件的更新间隔不超过六个月。 国家实验室以广播时间码格式传播闰秒警告。 这些警告通过 NTP 线上协议从 NTP 主服务器通过其他服务器传播到客户端。 闰秒由操作系统内核实现，如白皮书<a href="http://www.eecis.udel.edu/~mills/leap.html" target="_blank" rel="noopener">NTP Timescale</a> 和 <a href="http://www.eecis.udel.edu/~mills/leap.html" target="_blank" rel="noopener">Leap Seconds</a> 中所述。 实施细节在 <a href="https://www.eecis.udel.edu/~mills/ntp/html/leap.html" target="_blank" rel="noopener">Leap Second Processing</a> 页面中描述。</p>
+<blockquote>
+<p><img src="ntp.assets/time1.gif" alt="gif"></p>
+<p>图 1：NTP 数据格式</p>
+</blockquote>
+<p>图 1 显示了两种 NTP 时间格式，64 位 timestamp 格式和 128 位 datestamp  格式。 Datestamp 格式在内部使用，而 timestamp 格式用于客户端和服务器之间交换的数据包标头。 Timestamp 格式跨越 136 年，称为时代。 当前时代始于 1900 年 1 月 1 日，而下一个时代始于 2036 年。有关这些格式和转换的详细信息，请参阅白皮书 <a href="http://www.eecis.udel.edu/~mills/y2k.html" target="_blank" rel="noopener">The NTP Era and Era Numbering</a>。 但是，只要系统时钟最初设置为正确时间的 68 年内，NTP 协议将无论时代如何，都能正确同步。 有关此问题的进一步讨论，请参阅白皮书 <a href="http://www.eecis.udel.edu/~mills/time.html" target="_blank" rel="noopener">NTP Timestamp Calculations</a>。 通常，应用程序不知道这些格式，应用程序将这些 NTP 格式转换为本机 Unix 或 Windows 格式。</p>
+<h2 id="架构和算法"><a href="#架构和算法" class="headerlink" title="架构和算法"></a>架构和算法</h2><blockquote>
+<p><img src="ntp.assets/fig_3_1.gif" alt="gif"></p>
+<p>图 2：NTP 后台程序流程和算法</p>
+</blockquote>
+<p>NTP 体系结构的整体组织如图 2 所示。在此上下文中，将实现视为上游（下层）服务器的客户端和下游（更高层）客户端的服务器非常有用。 它包括用作每个参考时钟的一对 peer/poll 进程或用作同步源的远程服务器。 使用 <a href="http://www.eecis.udel.edu/~mills/onwire.html" target="_blank" rel="noopener">Analysis and Simulation of the NTP On-Wire Protocols</a> 中描述的协议在客户端和服务器之间交换数据包。 该协议可以抵御数据包的丢失，重放或欺骗。</p>
+<p>Polling 以 $8$ 秒（$\mathit{poll}=3$）到 $36$ 小时（$\mathit{poll}=17$）的间隔发送 NTP 数据包。 这个间隔是被托管的，如 <a href="https://www.eecis.udel.edu/~mills/ntp/html/poll.html" target="_blank" rel="noopener">Poll Process</a> 所述，以最大限度地提高准确性，同时最小化网络负载。对等进程接收 NTP 数据包并执行 <a href="https://www.eecis.udel.edu/~mills/ntp/html/decode.html" target="_blank" rel="noopener">Event Messages and Status Words</a> 和 <a href="https://www.eecis.udel.edu/~mills/ntp/html/decode.html#flash" target="_blank" rel="noopener">flash status word</a> 中描述的数据包健康检查。</p>
+<p>Flash Status Word 还会报告 <a href="http://www.eecis.udel.edu/~mills/security.html" target="_blank" rel="noopener">NTP Security Analysis</a> 中描述的各种访问控制和安全检查的结果。 <a href="https://www.eecis.udel.edu/~mills/ntp/html/rate.html" target="_blank" rel="noopener">Rate Management and the Kiss-o’-Death Packet</a> 上描述的复杂流量监控工具可防止拒绝服务（DoS）攻击。</p>
+<p>测试失败的一个或多个数据包将被立即丢弃。 不然 Peer Process 会运行一个使用四个原始 timestamp 的在线协议：客户端请求离开时的原始 timestamp $T_1$，到达服务器时的接收timestamp $T_2$，服务器回复离开时的发送 timestamp $T_3$，以及到达客户端时的目的地时间戳 $T_4$。 这些 timestamp 由 <a href="https://www.eecis.udel.edu/~mills/ntp/html/monopt.html#filegen" target="_blank" rel="noopener">filegen</a> 命令的 <code>rawstats</code> 选项记录，用于计算时钟偏移和往返延迟样本：<br>$$<br>\begin{aligned}<br>\mathit{offset} &amp;= \big[(T_2 - T_1) + (T_3 - T_4)\big] / 2 \<br>\mathit{delay}  &amp;= (T_4 - T_1) - (T_3 - T_2)<br>\end{aligned}<br>$$<br>本说明中，发送时间戳 $T_1$ 和 $T_3$ 是由 inline code 测量的 softstamps。 Softstamps 受到各种排队和处理延迟的影响。 更准确的测量使用 drivestamps，如 <a href="https://www.eecis.udel.edu/~mills/ntp/html/xleave.html" target="_blank" rel="noopener">NTP Interleaved Modes</a> 所述。 这些问题以及数学模型将在 <a href="http://www.eecis.udel.edu/~mills/time.html" target="_blank" rel="noopener">NTP Timestamp Calculations</a> 中讨论。</p>
+<p>一个或多个 Peer Process 偏移和延迟的统计信息由一组如下的缓解算法处理：</p>
+<ul>
+<li><p><a href="https://www.eecis.udel.edu/~mills/ntp/html/filter.html" target="_blank" rel="noopener">Clock Filter Algorithm</a> 上描述的算法，会选择最有可能产生精确结果的偏移和延迟样本。</p>
+</li>
+<li><p>通过上述测试的时钟源是可选择的，从这些可选择的时钟源中，<a href="https://www.eecis.udel.edu/~mills/ntp/html/select.html" target="_blank" rel="noopener">Clock Select Algorithm</a> 上描述的算法使用统计数据，根据 <a href="https://en.wikipedia.org/wiki/Quantum_Byzantine_agreement" target="_blank" rel="noopener">拜占庭协议</a> 和正确性原则确定多个恰当的时钟源（truechimers，反之为 falsetickers）。</p>
+</li>
+<li>根据恰当时钟源的数量，<a href="https://www.eecis.udel.edu/~mills/ntp/html/cluster.html" target="_blank" rel="noopener">Clock Cluster Algorithm</a> 描述的算法根据统计聚类原则确定选择的结果。</li>
+<li><a href="https://www.eecis.udel.edu/~mills/ntp/html/prefer.html" target="_blank" rel="noopener">Mitigation Rules and the prefer Keyword</a> 组合幸存的偏移量，将其中一个指定为 System Peer，并使用  <a href="https://www.eecis.udel.edu/~mills/ntp/html/discipline.html" target="_blank" rel="noopener">Clock Discipline Algorithm</a> 来生成最终用来调整系统时钟时间和频率的偏移量。</li>
+</ul>
+<p>时钟偏移和频率由 <a href="https://www.eecis.udel.edu/~mills/ntp/html/monopt.html#filegen" target="_blank" rel="noopener">filegen</a> 命令的 <code>loopstats</code> 选项记录。 有关这些算法的其他详细信息，请参阅 <a href="http://www.eecis.udel.edu/~mills/ntp.html" target="_blank" rel="noopener">Network Time Synchronization Research Project</a>。 有关 statistacl 原则和性能指标的其他信息，请参阅 <a href="https://www.eecis.udel.edu/~mills/ntp/html/stats.html" target="_blank" rel="noopener">Performance Metrics</a>。</p>
+
+    </section>
+    <footer class="post-footer">
+      <section class="author">
+    <h4>fanyang89</h4>
+    <p></p>
+</section>
+      <section class="share">
+    <h4>Share this post</h4>
+    <a class="icon-twitter" href="http://twitter.com/share?url=https://fanyang89.github.io/2019/10/20/how-ntp-works/"
+       onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+        <span class="hidden">Twitter</span>
+    </a>
+    <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https://fanyang89.github.io/2019/10/20/how-ntp-works/"
+       onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+        <span class="hidden">Facebook</span>
+    </a>
+    <a class="icon-google-plus" href="https://plus.google.com/share?url=https://fanyang89.github.io/2019/10/20/how-ntp-works/"
+       onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+        <span class="hidden">Google+</span>
+    </a>
+</section>
+    </footer>
+  </article>
+  <nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/2019/10/20/clock-discipline-algorithm/">
+        ← 时钟规划算法
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/2016/05/22/basics-of-functional-programming/">
+        简单说说函数式编程 →
+    </a>
+    
+</nav>
+  <div id="comment" class="comments-area">
+    <h1 class="title"><a href="#disqus_comments" name="disqus_comments">Comments</a></h1>
+
+    
+</div>
+</main>
+
+
+  
+<footer class="site-footer">
+  
+  <div class="inner">
+     <section class="copyright">All content copyright <a href="/">饭米</a> &copy; 2014 &bull; All rights reserved.</section>
+     <section class="poweredby">Proudly published with <a class="icon-ghost" href="http://zespia.tw/hexo/">Hexo</a></section>
+  </div>
+</footer>
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+<script type="text/javascript" src="/js/jquery.fitvids.js"></script>
+<script type="text/javascript" src="/js/index.js"></script>
+
+
+
+
+
+
+</body>
+</html>

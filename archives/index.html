@@ -40,7 +40,7 @@
   <article class="post">
     <header class="post-header">
       <span class="post-meta">
-      <time datetime="2019-10-20T15:01:54.000Z" itemprop="datePublished">
+      <time datetime="2019-10-20T15:50:54.000Z" itemprop="datePublished">
           2019-10-20
       </time>
     
@@ -62,6 +62,70 @@
       
       <p>
           <a href="/2019/10/20/learning-skybridge/" class="excerpt-link">阅读全文...</a>
+      </p>
+      
+    </section>
+  </article>
+  
+  <article class="post">
+    <header class="post-header">
+      <span class="post-meta">
+      <time datetime="2019-10-20T15:40:54.000Z" itemprop="datePublished">
+          2019-10-20
+      </time>
+    
+    
+    | 
+    <a href='/tags/ntp/'>ntp</a>
+    
+    
+</span>
+      <h2 class="post-title"><a href="/2019/10/20/clock-discipline-algorithm/">时钟规划算法</a></h2>
+    </header>
+    <section class="post-excerpt">
+      <p>
+      
+        原文： Clock Discipline Algorithm
+概述NTP 规范和参考实现的核心是时钟规则算法，最好将其描述为一个自适应参数并混合相位与频率锁定的反馈回路。它是一种精心设计的算法，可自动调整以得到最佳性能，同时最大限度地减少网络开销。 
+操作有两种模式：
+
+锁相回路（PLL，phase-lock loop），当轮询间隔（$\mathit{poll\ interval}$）低于 Allan 截距（默认为 $2048$ 秒）时
+      
+      </p>
+      
+      <p>
+          <a href="/2019/10/20/clock-discipline-algorithm/" class="excerpt-link">阅读全文...</a>
+      </p>
+      
+    </section>
+  </article>
+  
+  <article class="post">
+    <header class="post-header">
+      <span class="post-meta">
+      <time datetime="2019-10-20T15:31:54.000Z" itemprop="datePublished">
+          2019-10-20
+      </time>
+    
+    
+    | 
+    <a href='/tags/ntp/'>ntp</a>
+    
+    
+</span>
+      <h2 class="post-title"><a href="/2019/10/20/how-ntp-works/">NTP 是怎样工作的</a></h2>
+    </header>
+    <section class="post-excerpt">
+      <p>
+      
+        原文：How NTP Works
+概述NTP 时间同步服务在公网中广泛使用。目前，公共 NTP 子网在大多数国家和地球的每个大陆都包括数千台服务器，包括南极洲，有时还包括太空和海底。这些服务器直接或间接支持全球互联网中超过 2500 万台计算机的总人口。
+NTP 子网以层次结构运行，每个级别分配一个层数。最低级别的 Stratum 1（primary）服务器通过卫星，无线电或电话调制解调器直接与国家时间服务同步。下一个更高级别的 Str
+      
+      </p>
+      
+      <p>
+          <a href="/2019/10/20/how-ntp-works/" class="excerpt-link">阅读全文...</a>
       </p>
       
     </section>

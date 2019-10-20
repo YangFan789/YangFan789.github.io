@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+  <title>时钟规划算法 | 饭米</title>
+  <meta name="description" content="" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="MobileOptimized" content="320" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="stylesheet" type="text/css" href="/css/screen.css" />
+  <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noto+Serif:400,700,400italic|Open+Sans:700,400" />
+
+  <meta name="generator" content="饭米">
+
+  
+  
+  
+
+  
+</head>
+
+
+<body class="post-template">
+
+  <header class="site-head"  style="background-image: url(https://i.loli.net/2019/10/20/BpIN4caDSChKHMR.jpg)" >
+    <div class="vertical">
+        <div class="site-head-content inner">
+             <a class="blog-logo" href="/"><img src="https://i.loli.net/2019/10/20/aXjNvKWSJbE3wh6.jpg" alt="Blog Logo"/></a> 
+            <h1 class="blog-title">饭米</h1>
+            <h2 class="blog-description"></h2>
+        </div>
+    </div>
+</header>
+  
+
+<main class="content" role="main">
+  <article class="post">
+    <span class="post-meta">
+      <time datetime="2019-10-20T15:40:54.000Z" itemprop="datePublished">
+          2019-10-20
+      </time>
+    
+    
+    | 
+    <a href='/tags/ntp/'>ntp</a>
+    
+    
+</span>
+    <h1 class="post-title">时钟规划算法</h1>
+    <section class="post-content">
+      <p>原文： <a href="https://www.eecis.udel.edu/~mills/ntp/html/discipline.html" target="_blank" rel="noopener">Clock Discipline Algorithm</a></p>
+<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>NTP 规范和参考实现的核心是时钟规则算法，最好将其描述为一个自适应参数并混合相位与频率锁定的反馈回路。它是一种精心设计的算法，可自动调整以得到最佳性能，同时最大限度地减少网络开销。 </p>
+<p>操作有两种模式：</p>
+<ul>
+<li>锁相回路（PLL，phase-lock loop），当轮询间隔（$\mathit{poll\ interval}$）低于 Allan 截距（默认为 $2048$ 秒）时使用</li>
+<li>频锁回路（FLL，frequency-lock loop），当轮询间隔大于等于 Allan 截距时使用（译注：这里的“大于等于”是在 NTP 参考实现里的代码获取的）</li>
+</ul>
+<blockquote>
+<p><img src="ntp.assets/discipline.gif" alt="gif"></p>
+<p>图 1：时钟规划算法</p>
+</blockquote>
+<h2 id="时钟规划操作"><a href="#时钟规划操作" class="headerlink" title="时钟规划操作"></a>时钟规划操作</h2><p>时钟规划算法的框图如图 1 所示。</p>
+<ul>
+<li><p>参考时钟或远程服务器的 timestamp 与系统时钟的 timestamp 进行比较以产生原始偏移样本 $V_d$，表示为一个变频振荡器（Variable-frequency oscillator）。</p>
+</li>
+<li><p>时钟滤波器（Clock Filter）处理偏移样本以产生滤波更新 $V_s$。</p>
+</li>
+<li>环路滤波器（Loop Filter）实现了二型 PI 控制器（type-2 PIC）。PIC 可以分别使用预测变量 $x$ 和 $y$ 来最小化时间和频率中的误差。</li>
+</ul>
+<p>时钟调整过程每秒采样这些预测值一次；或者 Kernel 规划一系列的 Tick 中断来产生系统时钟更新 $V_c$。</p>
+<p>在 PLL 模式中，频率预测值是过去偏移更新的积分，而相位预测值是随时间缓和的偏移，以避免向后设置时钟。在 FLL 模式下，不使用相位预测值，而频率预测值类似于 NIST lockclock 算法。 在该算法中，频率预测值被计算为当前偏移的分数除以自上次更新的时间，以便最小化下一次更新时的偏移。</p>
+<p>PLL 模式下的规划响应由“时间常数”决定，会导致 stiffness（n. 僵硬；坚硬），这取决于可用信号源的抖动和系统时钟振荡器的漂移。 缩放时间常量也用作 <a href="https://www.eecis.udel.edu/~mills/ntp/html/poll.html" target="_blank" rel="noopener">Poll Program</a> 上描述的轮询间隔。 但是，在对称 NTP 模式下，每个 Peer 管理自己的轮询间隔，两者可能不相同。 在这种情况下，Peer 使用 $\mathit{minpoll}$ 和另一个 Peer 的 $\mathit{poll}$，其包括在 NTP packet header 中。</p>
+<h2 id="Loop-Dynamics"><a href="#Loop-Dynamics" class="headerlink" title="Loop Dynamics"></a>Loop Dynamics</h2><p>验证时钟规则算法是否稳定并满足 Nyquist 准则是必要的，这要求采样率至少是带宽的两倍。 在这种情况下，带宽可以通过时间常数的倒数来近似。在 NTP 规范和参考实现中，时间常数和轮询间隔表示为 2 的指数。通过构造，时间常数指数是轮询间隔指数的五倍。 因此，默认轮询指数为 6 对应于 64 秒的轮询间隔和 2048 秒的时间常数。 轮询间隔的变化将使得时间常数进行相应的改变。Nyquist 准则要求采样间隔不超过时间常数的一半或 1024 秒。 时钟滤波器在八个轮询间隔内保证至少一个采样，因此采样间隔不超过 512 秒。 这将被描述为过采样两倍。最后，选择 PLL 参数的阻尼系数为 2，这导致上升时间比临界阻尼快得多，但导致适度的超调为 6％。</p>
+<p>重要的是要了解 PLL 的动态如何受时间常数和轮询间隔的影响。 在默认轮询间隔 64 秒和步进偏移变化 100 毫秒时，时间响应在约 50 分钟内过零，并且按设计超过约 6 毫秒。 通常，阶跃校正会导致约 5 PPM 的临时频率波动，随着过冲在几个小时内缓慢消散。</p>
+<p>然而，与时钟调整算法一起使用的时钟状态机在启动时避免了这种瞬态。 它使用先前保存的频率文件（如果频率文件存在）或通过测量振荡器频率（如果频率文件不存在）来执行此操作。然后，它会在启动时快速分摊剩余偏移，而不会影响振荡器频率。这样，如果频率文件存在，偏移误差在 5 分钟内小于 0.5 毫秒，如果频率文件不存在则在 10 分钟内小于 0.5 毫秒。有关详细信息，请参阅 <a href="https://www.eecis.udel.edu/~mills/ntp/html/clock.html" target="_blank" rel="noopener">Clock State Machine</a>。</p>
+<p>由于 PLL 是线性的，具有不同偏移步长幅度和轮询间隔的响应具有相同的特征形状，但在幅度和时间上缩放不同。 响应与步幅完全一致，因此对 10 毫秒步长的响应与 64 秒处的形状相同，但幅度压缩了十分之一。 响应与轮询间隔精确缩放，因此轮询间隔为 8 秒的响应具有与64 秒相同的形状，但时间压缩了八分之一。</p>
+<p>最佳时间常数以及轮询间隔取决于网络时间抖动和振荡器频率漂移。 随着时间常数增加，抖动引起的误差减小，而随着时间常数减小，由于漂移引起的误差减小。 对于典型的因特网路径，两个误差特征在称为 Allan 截距的点处相交，其表示最佳时间常数。 利用 2048 秒的折衷Allan 拦截，最佳轮询间隔约为 64s，这对应于折衷的 $\mathit{poll}$ 为 $6$。对于具有现代计算机的快速局域网，Allan 拦截在约 512s 时略低，因此 $\mathit{poll}$ 为 4（16 s）是合适的。复杂的启发式算法用于管理指定范围内的实际轮询间隔。 详细信息在 <a href="https://www.eecis.udel.edu/~mills/ntp/html/poll.html" target="_blank" rel="noopener">Poll Program</a>。</p>
+<p>在 NTPv4 规范和参考实现中，状态机用于在异常条件下管理系统时钟，如 Daemon 首次启动或遇到严重的网络拥塞时。 在正常操作中不太可能遇到的极端情况下，系统时间可以前进或后退超过 128 毫秒。 有关详细信息，请参见 <a href="https://www.eecis.udel.edu/~mills/ntp/html/clock.html" target="_blank" rel="noopener">Clock State Machine</a>。</p>
+<h2 id="时钟的初始化和管理"><a href="#时钟的初始化和管理" class="headerlink" title="时钟的初始化和管理"></a>时钟的初始化和管理</h2><p>如果保持连续运行，家庭或办公室环境中高速局域网上的 NTP 客户端可以在 1ms 内保持同步。 当环境温度变化小于 1℃ 时，即使当本地时钟振荡器频率偏移为 100 PPM 或更高时，时钟振荡器频率也被调整至百万分之一（PPM）内。</p>
+<p>对于笔记本电脑和便携式设备，当电源关闭时，Battery Backup Clock 偏移可能每天增加一秒钟。 在几小时或几天后恢复供电时，时钟偏移和振荡器频率误差必须通过时钟调整算法解决，但这可能需要几个小时，无需特殊调整。</p>
+<p>本节中描述的规定确保在除了极端情况之外的所有情况下，在热启动后或冷启动后 10 分钟内，误差被抑制在标称水平内不超过 5 分钟。 以下是这些规定的摘要。 有关这些规定的详细讨论，请参见 <a href="https://www.eecis.udel.edu/~mills/ntp/html/clock.html" target="_blank" rel="noopener">Clock State Machine</a>。</p>
+<p>NTP 参考实现测量时钟振荡器频率，并以一小时或更长的间隔更新频率文件，具体取决于测量的频率漂移。 此设计旨在最大限度地减少可能在笔记本电脑或便携式设备中使用的 NVRAM 中的写入周期。 在热启动时，频率从该文件初始化，避免了可能很长的收敛时间。 在没有频率文件可用的冷启动时，NTP 参考实现首先在 5 分钟的间隔内测量振荡器频率。 这通常导致残余频率误差小于 1 PPM。 可以使用 <a href="https://www.eecis.udel.edu/~mills/ntp/html/miscopt.html#tinker" target="_blank" rel="noopener">tinker</a> 命令的 <code>stepout</code> 选项更改测量间隔。</p>
+<p>为了减少重启时的时钟偏移误差，参考实现 <code>mext</code> 禁用振荡器频率调整，并使用小时间常数启用时钟偏移规则。 这旨在快速减少时钟偏移误差，而不会引起频率浪涌。 该配置持续 5 分钟的间隔，之后时钟偏移误差通常不超过 1 毫秒。 可以使用 <a href="https://www.eecis.udel.edu/~mills/ntp/html/miscopt.html#tinker" target="_blank" rel="noopener">tinker</a> 命令的 <code>stepout</code> 选项更改测量间隔。</p>
+<p>重启时的另一个问题是，选择和聚类算法改进并验证初始时钟偏移估计所需的时间。 通常，在设置系统时钟之前需要多次更新。 由于大多数配置中的默认最小轮询间隔约为一分钟，因此在设置系统时钟之前可能需要几分钟。<a href="https://www.eecis.udel.edu/~mills/ntp/html/confopt.html#burst" target="_blank" rel="noopener">server</a>  命令的 <code>iburst</code> 选项会在重新启动时更改行为，建议用于 client/server 配置。 启用此选项后，客户端会以两秒钟的间隔发送六个请求。 这通常可确保在设置时钟之前大约十秒内可以获得可靠的估计。 一旦初始估计完成，就执行上述时间调整过程。</p>
+<p>作为上述考虑的结果，当在系统配置中包括诸如本地时钟驱动器，ACTS 调制解调器驱动器或孤立模式的备用源时，在常规源可选择之前，其中一个或多个备用源是可选择的。 当备份源包含在配置中时，在切换到备份源之前，参考实现会等待几分钟。在此期间内没有常规源。 这通常足以避免由于过早切换到备份源而导致的启动瞬变（startup transients）。 可以使用 <code>tos</code> 命令的<code>orphanwait</code> 选项更改间隔。</p>
+
+    </section>
+    <footer class="post-footer">
+      <section class="author">
+    <h4>fanyang89</h4>
+    <p></p>
+</section>
+      <section class="share">
+    <h4>Share this post</h4>
+    <a class="icon-twitter" href="http://twitter.com/share?url=https://fanyang89.github.io/2019/10/20/clock-discipline-algorithm/"
+       onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+        <span class="hidden">Twitter</span>
+    </a>
+    <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https://fanyang89.github.io/2019/10/20/clock-discipline-algorithm/"
+       onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+        <span class="hidden">Facebook</span>
+    </a>
+    <a class="icon-google-plus" href="https://plus.google.com/share?url=https://fanyang89.github.io/2019/10/20/clock-discipline-algorithm/"
+       onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+        <span class="hidden">Google+</span>
+    </a>
+</section>
+    </footer>
+  </article>
+  <nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/2019/10/20/learning-skybridge/">
+        ← Learning SkyBridge
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/2019/10/20/how-ntp-works/">
+        NTP 是怎样工作的 →
+    </a>
+    
+</nav>
+  <div id="comment" class="comments-area">
+    <h1 class="title"><a href="#disqus_comments" name="disqus_comments">Comments</a></h1>
+
+    
+</div>
+</main>
+
+
+  
+<footer class="site-footer">
+  
+  <div class="inner">
+     <section class="copyright">All content copyright <a href="/">饭米</a> &copy; 2014 &bull; All rights reserved.</section>
+     <section class="poweredby">Proudly published with <a class="icon-ghost" href="http://zespia.tw/hexo/">Hexo</a></section>
+  </div>
+</footer>
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+<script type="text/javascript" src="/js/jquery.fitvids.js"></script>
+<script type="text/javascript" src="/js/index.js"></script>
+
+
+
+
+
+
+</body>
+</html>
